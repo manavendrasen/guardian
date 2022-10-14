@@ -1,7 +1,7 @@
 import { Project } from "./Project";
 import { User } from "./User";
 
-export type ProjectTeam = {
+export interface ProjectTeam {
   encProjectKey: string;
   memberId: string;
   member: User;

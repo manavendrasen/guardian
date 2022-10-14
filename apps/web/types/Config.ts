@@ -3,7 +3,7 @@ import { ConfigTeam } from "./ConfigTeam";
 import { Project } from "./Project";
 import { Secret } from "./Secret";
 
-export type Config = {
+export interface Config {
   id: string;
   environment: Environment;
   name: string;

@@ -1,7 +1,7 @@
 import { Config } from "./Config";
 import { User } from "./User";
 
-export type ConfigTeam = {
+export interface ConfigTeam {
   encConfigKey: string;
   memberId: string;
   member: User;

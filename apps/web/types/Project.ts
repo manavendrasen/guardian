@@ -2,7 +2,7 @@ import { Config } from "./Config";
 import { ProjectTeam } from "./ProjectTeam";
 import { User } from "./User";
 
-export type Project = {
+export interface Project {
   id: string;
   name: string;
   description: string;

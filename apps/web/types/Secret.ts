@@ -1,6 +1,6 @@
 import { Config } from "./Config";
 
-export type Secret = {
+export interface Secret {
   id: string;
   name: string;
   value: string;
