@@ -1,4 +1,4 @@
-import { Configs } from "./Config";
+import { Config } from "./Config";
 import { ProjectTeam } from "./ProjectTeam";
 import { User } from "./User";
 
@@ -9,7 +9,7 @@ export type Project = {
   webhookUrl: string;
   ownerId: string;
   owner: User;
-  configs: Configs[];
+  configs: Config[];
   teamMember: ProjectTeam[];
   createdAt: Date;
   updatedAt: Date;
