@@ -4,22 +4,11 @@ import { useRouter } from "next/router";
 import SidebarLinkGroup from "./SidebarLinkGroup";
 import useDashboardStore from "store/dashboardStore";
 import { FiZap, FiSettings } from "react-icons/fi";
-
-const projects = [
-  {
-    id: "1",
-    name: "Poptalk",
-    description: "Eu mollit id sit cupidatat aliqua.",
-  },
-  {
-    id: "2",
-    name: "Vinyl",
-    description: "Eu mollit id sit cupidatat aliqua.",
-  },
-];
+import useProjectStore from "store/projectStore";
 
 function Sidebar() {
   const { isVisible, setIsVisible } = useDashboardStore();
+  const { projects } = useProjectStore();
   const router = useRouter();
   const { pathname } = router;
 

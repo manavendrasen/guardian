@@ -6,22 +6,11 @@ import ProjectTile from "components/ProjectTile/ProjectTile";
 import AddProjectForm from "features/AddProjectForm/AddProjectForm";
 import { FiPlus } from "react-icons/fi";
 import useModal from "store/modalStore";
-
-const projects = [
-  {
-    id: "1",
-    name: "Poptalk",
-    description: "Eu mollit id sit cupidatat aliqua.",
-  },
-  {
-    id: "2",
-    name: "Vinyl",
-    description: "Eu mollit id sit cupidatat aliqua.",
-  },
-];
+import useProjectStore from "store/projectStore";
 
 const Web = () => {
   const { showModal } = useModal();
+  const { projects } = useProjectStore();
   const createNewProjectHandler = () => {
     showModal(<AddProjectForm />);
   };
