@@ -1,0 +1,106 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model Project {
+  id          String        @id @default(uuid())
+  name        String        @unique
+  description String        @db.Text
+  webhookUrl  String        @unique @map("webhook_url")
+  ownerId     String
+  owner       User          @relation("OwnerRelationship", fields: [ownerId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  configs     Config[]      @relation("ProjectConfigs")
+  teamMember  ProjectTeam[] @relation("ProjectShared")
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([ownerId])
+  @@map("projects")
+}
+
+model ProjectTeam {
+  encProjectKey String  @map("enc_project_key") @db.VarChar(255)
+  memberId      String
+  member        User    @relation("ProjectSharedWith", fields: [memberId], references: [id], onUpdate: Cascade)
+  projectId     String
+  project       Project @relation("ProjectShared", fields: [projectId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  @@unique([memberId, projectId])
+  @@index([memberId, projectId])
+  @@map("users_projects")
+}
+
+model User {
+  id            String        @id @default(uuid())
+  email         String        @unique
+  password      String        @db.Text
+  publicKey     String        @map("public_key") @db.VarChar(255)
+  encPrivateKey String        @map("enc_private_key") @db.VarChar(255)
+  myProjects    Project[]     @relation("OwnerRelationship")
+  projectShared ProjectTeam[] @relation("ProjectSharedWith")
+  configShared  ConfigTeam[]  @relation("ConfigSharedWith")
+
+  @@map("users")
+}
+
+model ConfigTeam {
+  encConfigKey String @map("enc_config_key") @db.VarChar(255)
+  role         Role   @default(DEVELOPER)
+  memberId     String
+  member       User   @relation("ConfigSharedWith", fields: [memberId], references: [id], onUpdate: Cascade)
+  configId     String
+  config       Config @relation("ConfigShared", fields: [configId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  @@unique([memberId, configId])
+  @@index([memberId, configId])
+  @@map("users_config")
+}
+
+model Config {
+  id           String       @id @default(uuid())
+  environment  Environment  @default(DEVELOPMENT)
+  name         String
+  projectId    String
+  project      Project      @relation("ProjectConfigs", fields: [projectId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  secrets      Secret[]     @relation("ContainsSecret")
+  configMember ConfigTeam[] @relation("ConfigShared")
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@unique([name, environment])
+  @@index([projectId])
+  @@map("config")
+}
+
+model Secret {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  value     String
+  comment   String
+  configId  String
+  config    Config   @relation("ContainsSecret", fields: [configId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([configId])
+  @@map("secrets")
+}
+
+enum Environment {
+  PRODUCTION
+  STAGING
+  DEVELOPMENT
+}
+
+enum Role {
+  OWNER
+  MAINTAINER
+  DEVELOPER
+}
