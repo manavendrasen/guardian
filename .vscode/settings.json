@@ -1,0 +1,10 @@
+{
+  "eslint.workingDirectories": [
+      "./apps/api",
+      "./apps/cli",
+      "./apps/web",
+      "./packages/common",
+      "./packages/tsconfig",
+      "./packages/ui",
+  ]
+}

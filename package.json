@@ -1,5 +1,5 @@
 {
-  "name": "guardian-hackout",
+  "name": "guardian",
   "version": "0.0.0",
   "private": true,
   "workspaces": [
@@ -9,17 +9,14 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
-    "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
-    "eslint-config-custom": "workspace:*",
-    "prettier": "latest",
-    "turbo": "latest"
+    "prettier": "^2.7.1",
+    "turbo": "^1.5.5"
   },
   "engines": {
     "node": ">=14.0.0"
   },
-  "dependencies": {},
-  "packageManager": "pnpm@6.27.1"
+  "packageManager": "pnpm@7.13.2"
 }
