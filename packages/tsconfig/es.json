@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "node",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "module": "ES6",
+    "moduleResolution": "NodeNext",
+
+    "target": "ES2021",
+    "lib": ["ES2021", "DOM", "DOM.Iterable"],
+
+    "strictPropertyInitialization": false,
+
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  }
+}

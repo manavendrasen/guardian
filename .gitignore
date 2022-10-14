@@ -12,6 +12,7 @@ coverage
 .next/
 out/
 build
+dist/
 
 # misc
 .DS_Store
@@ -28,6 +29,9 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+config.env
 
 # turbo
 .turbo
+
+guardian.json

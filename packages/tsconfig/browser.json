@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "browser",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "allowJs": true,
+
+    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+
+    "target": "ES6",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+  
+    "jsx": "preserve",
+    "resolveJsonModule": true,
+
+    "noEmit": true,
+    "watch": true,
+
+    "composite": false,
+    "incremental": true
+  }
+}
