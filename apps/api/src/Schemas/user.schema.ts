@@ -1,48 +1,48 @@
 import { z } from "zod";
 
 const user = {
-    email: z
-        .string({
-            required_error: "Email is required",
-            invalid_type_error: "Invalid Email",
-        })
-        .email(),
-    publicKey: z.string({
-        required_error: "Required Field",
-    }),
-    encPrivateKey: z.string({
-        required_error: "Required Field",
-    }),
+  email: z
+    .string({
+      required_error: "Email is required",
+      invalid_type_error: "Invalid Email",
+    })
+    .email(),
+  publicKey: z.string({
+    required_error: "Required Field",
+  }),
+  encPrivateKey: z.string({
+    required_error: "Required Field",
+  }),
 };
 
 export const userResponseSchema = z.object({
-    id: z.string({
-        invalid_type_error: "Id is required",
-    }),
-    token: z.string({
-        invalid_type_error: "token required",
-        required_error: "token required",
-    }),
-    ...user,
+  id: z.string({
+    invalid_type_error: "Id is required",
+  }),
+  token: z.string({
+    invalid_type_error: "token required",
+    required_error: "token required",
+  }),
+  ...user,
 });
 
 const userRequestSchema = z
-    .object({
-        ...user,
-        password: z.string({
-            required_error: "Password is required",
-        }),
-        confirmPassword: z.string({
-            required_error: "Password is required",
-        }),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-        message: "Password do not match",
-        path: ["confirmPassword"],
-    });
+  .object({
+    ...user,
+    password: z.string({
+      required_error: "Password is required",
+    }),
+    confirmPassword: z.string({
+      required_error: "Password is required",
+    }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Password do not match",
+    path: ["confirmPassword"],
+  });
 
 export const userRequestValidateSchema = z.object({
-    body: userRequestSchema,
+  body: userRequestSchema,
 });
 
 // const userSchema = z.object({
@@ -52,7 +52,7 @@ export const userRequestValidateSchema = z.object({
 // })
 
 export type UserRequestValidateSchema = z.infer<
-    typeof userRequestValidateSchema
+  typeof userRequestValidateSchema
 >;
 
 export type UserResponseSchema = z.infer<typeof userResponseSchema>;
