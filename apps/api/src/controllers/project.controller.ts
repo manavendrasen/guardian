@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { ZodError } from "zod";
 import { throwError } from "../helpers/errorHandlers.helpers";
 import asyncHandler from "../middlewares/async";
-import { ProjectValidateSchema } from "../Schemas/project.shema";
+import { ProjectValidateSchema } from "../Schemas/project.schema";
 import { createProject } from "../service/project.service";
 
 export const createProjectController = asyncHandler(
