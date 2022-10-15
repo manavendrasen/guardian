@@ -4,7 +4,8 @@ import { ZodError } from "zod";
 import { throwError } from "../helpers/errorHandlers.helpers";
 import asyncHandler from "../middlewares/async";
 import { ConfigValidateRequestSchema } from "../Schemas/config.schema";
-import { assignMemberToConfig, createConfig, findConfigByIdWithProject, getAllConfigs } from "../service/config.service";
+import { assignMemberToConfig, createConfig, findConfigByIdWithProject, getAllConfigs, getAllSecretsFromNameForConfig } from "../service/config.service";
+
 import { findProjectById, memberInProject } from "../service/project.service";
 
 export const createConfigController = asyncHandler(
@@ -23,9 +24,9 @@ export const createConfigController = asyncHandler(
       const project = await findProjectById(projectId);
       if (!project) throwError(404, "Project id not found");
 
-      if (!user) throwError(404, "User Not Found")
-      const checkMember = await memberInProject(projectId, user.email!)
-      if (!checkMember) throwError(404, "User not found in team")
+      if (!user) throwError(404, "User Not Found");
+      const checkMember = await memberInProject(projectId, user.email!);
+      if (!checkMember) throwError(404, "User not found in team");
 
       const config = await createConfig(projectId, data);
       if (!config) throwError(400, "Config not Created");
@@ -69,6 +70,16 @@ export const assignMemberToConfigController = asyncHandler(
       }
 
       res.status(201).send(response);
+export const getConfigSecretsByNameController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { projectName, configName } = req.body;
+
+    try {
+      const secrets = await getAllSecretsFromNameForConfig(
+        projectName,
+        configName
+      );
+      res.send(secrets);
     } catch (e: any) {
       if (e instanceof ZodError) {
         console.error(e.flatten);
@@ -100,4 +111,4 @@ export const getAllConfigsController = asyncHandler(
       }
     }
   }
-);
+);a
