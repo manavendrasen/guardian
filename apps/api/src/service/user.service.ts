@@ -7,7 +7,7 @@ import {
 import prisma from "../utils/connectPrisma";
 
 export const createUser = async (body: UserRequestSchema) => {
-  const data= body;
+  const data = body;
   try {
     return await prisma.user.create({
       data,
@@ -82,6 +82,36 @@ export const findPublicKeyByEmail = async (email: string) => {
       },
       select: {
         publicKey: true,
+      },
+    });
+  } catch (e: any) {
+    throwError(502, e.error);
+  }
+};
+
+export const findAllProjectOfTheUser = async (id: string) => {
+  try {
+    return await prisma.user.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        projectShared: {
+          where: {
+            memberId: id,
+          },
+          select: {
+            encProjectKey: true,
+          },
+        },
+        myProjects: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            webhookUrl: true,
+          },
+        },
       },
     });
   } catch (e: any) {

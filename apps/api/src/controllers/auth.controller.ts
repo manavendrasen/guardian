@@ -13,7 +13,7 @@ import { authenticateUser, createUser } from "../service/user.service";
 export const createUserController = asyncHandler(
   async (req: Request, res: Response) => {
     try {
-      const user = await createUser(req.body);
+      const user: User | undefined = await createUser(req.body);
       res.status(201).send(user);
     } catch (e: any) {
       console.log(e);
