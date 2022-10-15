@@ -19,6 +19,7 @@ importers:
       '@types/node': ^18.8.3
       '@types/passport': ^1.0.11
       '@types/passport-jwt': ^3.0.7
+      axios: ^1.1.2
       cors: ^2.8.5
       dotenv: ^16.0.3
       express: ^4.18.2
@@ -33,6 +34,7 @@ importers:
       zod: ^3.19.1
     dependencies:
       '@prisma/client': 4.4.0_prisma@4.4.0
+      axios: 1.1.2
       cors: 2.8.5
       dotenv: 16.0.3
       express: 4.18.2
