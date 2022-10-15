@@ -67,6 +67,15 @@ export const getAllConfigs = async (projectId: string, memberId: string) => {
       id: true,
       environment: true,
       name: true,
+      configMember: {
+        where: {
+          memberId
+        }
+        , select: {
+          encConfigKey: true,
+          role: true
+        }
+      },
       _count: {
         select: {
           secrets: true
