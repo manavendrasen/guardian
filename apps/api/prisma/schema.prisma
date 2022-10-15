@@ -28,7 +28,7 @@ model Project {
 model ProjectTeam {
   encProjectKey String  @map("enc_project_key") @db.Text
   memberId      String
-  member        User    @relation("ProjectSharedWith", fields: [memberId], references: [id], onUpdate: Cascade)
+  member        User    @relation("ProjectSharedWith", fields: [memberId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   projectId     String
   project       Project @relation("ProjectShared", fields: [projectId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
@@ -54,7 +54,7 @@ model ConfigTeam {
   encConfigKey String @map("enc_config_key") @db.Text
   role         Role   @default(DEVELOPER)
   memberId     String
-  member       User   @relation("ConfigSharedWith", fields: [memberId], references: [id], onUpdate: Cascade)
+  member       User   @relation("ConfigSharedWith", fields: [memberId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   configId     String
   config       Config @relation("ConfigShared", fields: [configId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
