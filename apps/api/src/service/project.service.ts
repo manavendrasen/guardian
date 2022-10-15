@@ -54,4 +54,23 @@ export const memberInProject = async (projectId: string, email: string) => {
   }
 }
 
-
+export const getAllottedMembers = async (projectId: string) => {
+  return await prisma.project.findUnique({
+    where: {
+      id: projectId
+    },
+    select: {
+      teamMember: {
+        select: {
+          member: {
+            select: {
+              email: true,
+              id: true,
+              publicKey: true
+            }
+          }
+        }
+      }
+    }
+  })
+}
