@@ -28,12 +28,6 @@ export default class RunCommand extends Command {
 
     const ss = new StorageService(tokens);
 
-    const project = await ss.createNewProject({
-      name: "new-project",
-      description: "nice project description"
-    })
-    await ss.getProject(project.projectId);
-
     const vars = await getVarsForConfig("", "");
 
     const arr = flags.command.split(" ");
@@ -49,8 +43,5 @@ export default class RunCommand extends Command {
       console.log(data.toString());
     });
 
-    // ls.on('exit', function (code:any) {
-    //   console.log(code.toString());
-    // });
   }
 }

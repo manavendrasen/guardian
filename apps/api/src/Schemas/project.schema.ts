@@ -7,7 +7,7 @@ const project = {
   description: z.string({
     required_error: "Please provide a description",
   }),
-  webhookUrl: z.string().url("Invalid Url"),
+  webhookUrl: z.string(),
   encProjectKey: z.string({
     required_error: "Project Key not sent"
   })

@@ -25,7 +25,7 @@ export default class LoginCommand extends Command {
     const answers = await inquirer.prompt(qs);
 
     const as = new AuthServices();
-    const result = await as.login(answers.email, answers.masterPassword)
+    const result = await as.login(answers.email, answers.masterPassword);
 
     if (result.success == true) {
       createFile(path.join(homedir(), ".guardian.json"), JSON.stringify(result.tokens))

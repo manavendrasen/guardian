@@ -26,6 +26,7 @@ export const createProjectController = asyncHandler(
                 console.error(e.flatten);
                 throwError(400, "Bad data Input");
             } else {
+                console.log(e);
                 throwError(409, e.message);
             }
         }
