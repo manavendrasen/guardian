@@ -3,6 +3,8 @@ import ConfigTile from "components/ConfigTile/ConfigTile";
 import DashboardLayout from "components/DashboardLayout/DashboardLayout";
 import NextHead from "components/NextHead/NextHead";
 import PageHeader from "components/PageHeader/PageHeader";
+import { Environment } from "constants/Environments";
+import AddConfigForm from "features/AddConfig/AddConfig";
 import AddMemberToProjectForm from "features/AddMemberToProject/AddMemberToProject";
 import React from "react";
 import { FiPlus, FiGlobe, FiUsers, FiSettings } from "react-icons/fi";
@@ -39,7 +41,13 @@ const ProjectId: React.FC<ProjectIdProps> = () => {
           <div className=' w-full rounded-lg flex flex-col gap-4'>
             <h6 className='font-medium'>Development</h6>
             <hr />
-            <SecondaryButton onClick={() => {}}>
+            <SecondaryButton
+              onClick={() => {
+                showModal(
+                  <AddConfigForm environment={Environment.DEVELOPMENT} />
+                );
+              }}
+            >
               <FiPlus />
             </SecondaryButton>
             <ConfigTile
@@ -51,14 +59,24 @@ const ProjectId: React.FC<ProjectIdProps> = () => {
           <div className=' w-full rounded-lg flex flex-col  gap-4'>
             <h6 className='font-medium'>Staging</h6>
             <hr />
-            <SecondaryButton onClick={() => {}}>
+            <SecondaryButton
+              onClick={() => {
+                showModal(<AddConfigForm environment={Environment.STAGING} />);
+              }}
+            >
               <FiPlus />
             </SecondaryButton>
           </div>
           <div className=' w-full rounded-lg flex flex-col  gap-4'>
             <h6 className='font-medium'>Production</h6>
             <hr />
-            <SecondaryButton onClick={() => {}}>
+            <SecondaryButton
+              onClick={() => {
+                showModal(
+                  <AddConfigForm environment={Environment.PRODUCTION} />
+                );
+              }}
+            >
               <FiPlus />
             </SecondaryButton>
           </div>

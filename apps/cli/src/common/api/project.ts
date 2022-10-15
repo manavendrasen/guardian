@@ -8,6 +8,7 @@ export type ProjectResult = {
   ownerId: string;
   createdAt: string;
   updatedAt: string;
+  encryptedProjectKey: string;
 };
 
 export const createProject = async (
@@ -23,14 +24,26 @@ export const createProject = async (
       name: encryptedName,
       description: encryptedDescription,
       webhookUrl: encryptedWebhook,
-      encProjectKey: encryptedProjectKey
+      encProjectKey: encryptedProjectKey,
     },
     {
       headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
+        Authorization: `Bearer ${accessToken}`,
+      },
     }
   );
 
   return res.data as ProjectResult;
+};
+
+export const getAllProjects = async (
+  accessToken: string
+): Promise<ProjectResult[]> => {
+  const res = await axios.get("http://localhost:5000/api/v1/user/get-project", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return res.data;
 };

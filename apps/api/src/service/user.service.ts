@@ -91,30 +91,33 @@ export const findPublicKeyByEmail = async (email: string) => {
 
 export const findAllProjectOfTheUser = async (id: string) => {
   try {
-    return await prisma.user.findFirst({
+    console.log(id);
+    const result = await prisma.user.findFirst({
       where: {
         id,
       },
       select: {
         projectShared: {
           where: {
-            memberId: id,
+            member: {
+              id,
+            },
           },
           select: {
             encProjectKey: true,
-          },
-        },
-        myProjects: {
-          select: {
-            id: true,
-            name: true,
-            description: true,
-            webhookUrl: true,
+
           },
         },
       },
     });
+
+    return result?.projectShared.map((p) => {
+      return {
+        encProjectKey: p.encProjectKey,
+      };
+    });
   } catch (e: any) {
+    console.log(e);
     throwError(502, e.error);
   }
 };

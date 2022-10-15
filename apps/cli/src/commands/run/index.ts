@@ -27,6 +27,7 @@ export default class RunCommand extends Command {
     ) as AuthTokens;
 
     const ss = new StorageService(tokens);
+    // ss.getAllProjects();
 
     const vars = await getVarsForConfig("", "");
 

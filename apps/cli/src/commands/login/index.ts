@@ -25,6 +25,7 @@ export default class LoginCommand extends Command {
     const answers = await inquirer.prompt(qs);
 
     const as = new AuthServices();
+    // console.log(await as.signUp(answers.email, answers.masterPassword));
     const result = await as.login(answers.email, answers.masterPassword);
 
     if (result.success == true) {

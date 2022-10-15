@@ -5,7 +5,7 @@ import { Secret } from "./Secret";
 
 export interface Config {
   id: string;
-  environment: Environment;
+  environment: string;
   name: string;
   projectId: string;
   project: Project;
