@@ -4,7 +4,7 @@ import { ZodError } from "zod";
 import { throwError } from "../helpers/errorHandlers.helpers";
 import asyncHandler from "../middlewares/async";
 import { ConfigValidateRequestSchema } from "../Schemas/config.schema";
-import { assignMemberToConfig, createConfig, findConfigByIdWithProject } from "../service/config.service";
+import { assignMemberToConfig, createConfig, findConfigByIdWithProject, getAllConfigs } from "../service/config.service";
 import { findProjectById, memberInProject } from "../service/project.service";
 
 export const createConfigController = asyncHandler(
@@ -69,6 +69,28 @@ export const assignMemberToConfigController = asyncHandler(
       }
 
       res.status(201).send(response);
+    } catch (e: any) {
+      if (e instanceof ZodError) {
+        console.error(e.flatten);
+        throwError(400, "Bad data Input");
+      } else {
+        throwError(409, e.message);
+      }
+    }
+  }
+);
+
+export const getAllConfigsController = asyncHandler(
+  async (
+    req: Request,
+    res: Response
+  ) => {
+    const { projectId } = req.params;
+    const user: any = req.user;
+    try {
+      const getConfigs = await getAllConfigs(projectId, user.id)
+
+      res.status(201).send({ projectId, getConfigs });
     } catch (e: any) {
       if (e instanceof ZodError) {
         console.error(e.flatten);

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { assignMemberToConfigController, createConfigController } from "../controllers/config.controller";
+import { assignMemberToConfigController, createConfigController, getAllConfigsController } from "../controllers/config.controller";
 import validate from "../middlewares/validateResources";
 import { configValidateRequestSchema } from "../Schemas/config.schema";
 
@@ -13,6 +13,7 @@ router.post(
   createConfigController
 );
 
+router.get('/get-all-configs/:projectId', getAllConfigsController)
 
 
 export default router;

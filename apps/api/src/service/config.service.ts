@@ -52,3 +52,26 @@ export const assignMemberToConfig = async ({ email, encConfigKey, role }: { emai
     return { email, error: "User already assigned to same Config" }
   }
 }
+
+export const getAllConfigs = async (projectId: string, memberId: string) => {
+  return await prisma.config.findMany({
+    where: {
+      configMember: {
+        some: {
+          memberId
+        }
+      },
+      projectId
+    },
+    select: {
+      id: true,
+      environment: true,
+      name: true,
+      _count: {
+        select: {
+          secrets: true
+        }
+      }
+    }
+  })
+}
