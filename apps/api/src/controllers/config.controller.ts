@@ -4,7 +4,13 @@ import { ZodError } from "zod";
 import { throwError } from "../helpers/errorHandlers.helpers";
 import asyncHandler from "../middlewares/async";
 import { ConfigValidateRequestSchema } from "../Schemas/config.schema";
-import { assignMemberToConfig, createConfig, findConfigByIdWithProject, getAllConfigs, getAllSecretsFromNameForConfig } from "../service/config.service";
+import {
+  assignMemberToConfig,
+  createConfig,
+  findConfigByIdWithProject,
+  getAllConfigs,
+  getAllSecretsFromNameForConfig,
+} from "../service/config.service";
 
 import { findProjectById, memberInProject } from "../service/project.service";
 
@@ -31,8 +37,11 @@ export const createConfigController = asyncHandler(
       const config = await createConfig(projectId, data);
       if (!config) throwError(400, "Config not Created");
 
-      const addToMember = await assignMemberToConfig({ email: user.email, encConfigKey: encConfigKey, role: "OWNER" }, config.id)
-      if (!addToMember) throwError(400, "User is not added in Config Team")
+      const addToMember = await assignMemberToConfig(
+        { email: user.email, encConfigKey: encConfigKey, role: "OWNER" },
+        config.id
+      );
+      if (!addToMember) throwError(400, "User is not added in Config Team");
 
       res.status(201).send(config);
     } catch (e: any) {
@@ -47,29 +56,38 @@ export const createConfigController = asyncHandler(
 );
 
 export const assignMemberToConfigController = asyncHandler(
-  async (
-    req: Request,
-    res: Response
-  ) => {
+  async (req: Request, res: Response) => {
     const { configId } = req.params;
-    const { members }: { members: { email: string, encConfigKey: string, role?: Role }[] } = req.body;
+    const {
+      members,
+    }: { members: { email: string; encConfigKey: string; role?: Role }[] } =
+      req.body;
     const user: any = req.user;
     try {
-
       if (!user) throwError(404, "Unauthorized User");
 
       const config = await findConfigByIdWithProject(configId);
       if (!config) throwError(404, "Project id not found");
 
-      if (!(config!.project.ownerId === user.id)) throwError(403, "User is not Owner")
-      let response: { email: string, error: null | string }[] = [];
+      if (!(config!.project.ownerId === user.id))
+        throwError(403, "User is not Owner");
+      let response: { email: string; error: null | string }[] = [];
       for (let i = 0; i < members.length; i++) {
-        response.push(
-          await assignMemberToConfig(members[i], configId)
-        )
+        response.push(await assignMemberToConfig(members[i], configId));
       }
 
       res.status(201).send(response);
+    } catch (e: any) {
+      if (e instanceof ZodError) {
+        console.error(e.flatten);
+        throwError(400, "Bad data Input");
+      } else {
+        throwError(409, e.message);
+      }
+    }
+  }
+);
+
 export const getConfigSecretsByNameController = asyncHandler(
   async (req: Request, res: Response) => {
     const { projectName, configName } = req.body;
@@ -92,14 +110,11 @@ export const getConfigSecretsByNameController = asyncHandler(
 );
 
 export const getAllConfigsController = asyncHandler(
-  async (
-    req: Request,
-    res: Response
-  ) => {
+  async (req: Request, res: Response) => {
     const { projectId } = req.params;
     const user: any = req.user;
     try {
-      const getConfigs = await getAllConfigs(projectId, user.id)
+      const getConfigs = await getAllConfigs(projectId, user.id);
 
       res.status(201).send({ projectId, getConfigs });
     } catch (e: any) {
@@ -111,4 +126,4 @@ export const getAllConfigsController = asyncHandler(
       }
     }
   }
-);a
+);
