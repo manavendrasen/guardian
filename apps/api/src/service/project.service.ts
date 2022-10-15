@@ -1,10 +1,11 @@
-import { ProjectRequestSchema } from "../Schemas/project.schema";
+import { throwError } from "../helpers/errorHandlers.helpers";
 import { UserResponseSchema } from "../Schemas/user.schema";
 import prisma from "../utils/connectPrisma";
+import { findUserByEmail } from "./user.service";
 
 export const createProject = async (
   user: UserResponseSchema,
-  data: ProjectRequestSchema
+  data: any
 ) => {
   return await prisma.project.create({
     data: {
@@ -21,3 +22,37 @@ export const findProjectById = async (id: string) => {
     },
   });
 };
+
+export const addMemberToProject = async ({ email, encProjectKey }: { email: string, encProjectKey: string }, projectId: string) => {
+  const member = await findUserByEmail(email);
+  if (!member) return { email, error: "User Not Registered" }
+  try {
+    await prisma.projectTeam.create({
+      data: {
+        encProjectKey,
+        projectId,
+        memberId: member.id
+      }
+    });
+    return { email, error: null }
+  } catch (error) {
+    return { email, error: "User already assigned to same project" }
+  }
+}
+
+export const memberInProject = async (projectId: string, email: string) => {
+  try {
+    return await prisma.projectTeam.findMany({
+      where: {
+        member: {
+          email
+        },
+        projectId
+      }
+    });
+  } catch (error) {
+    return false
+  }
+}
+
+
