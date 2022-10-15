@@ -1,8 +1,8 @@
+import React from "react";
 import Button from "components/Button/Button";
 import DashboardLayout from "components/DashboardLayout/DashboardLayout";
 import NextHead from "components/NextHead/NextHead";
 import PageHeader from "components/PageHeader/PageHeader";
-import React from "react";
 import { FiPlus } from "react-icons/fi";
 import useConfigStore from "store/configStore";
 
