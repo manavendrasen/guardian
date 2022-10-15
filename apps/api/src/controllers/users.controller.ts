@@ -3,6 +3,7 @@ import { ZodError } from "zod";
 import { throwError } from "../helpers/errorHandlers.helpers";
 import asyncHandler from "../middlewares/async";
 import {
+  findAllProjectOfTheUser,
   findEncryptedPrivateById,
   findPublicKeyByEmail,
 } from "../service/user.service";
@@ -39,6 +40,26 @@ export const findPublicKeyByEmailIdController = asyncHandler(
         throwError(400, "Bad data input");
       } else {
         console.log(e.flatten);
+        throwError(409, e.message);
+      }
+    }
+  }
+);
+
+export const findAllProjectOfTheUserController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user: any = req.user;
+
+    try {
+      if (!user) throwError(404, "User Not Found");
+
+      const data = await findAllProjectOfTheUser(user.id!);
+      res.send(data);
+    } catch (e: any) {
+      if (e instanceof ZodError) {
+        console.error(e.flatten);
+        throwError(400, "Bad data Input");
+      } else {
         throwError(409, e.message);
       }
     }

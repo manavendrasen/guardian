@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  findAllProjectOfTheUserController,
   findEncryptedPrivateByIdController,
   findPublicKeyByEmailIdController,
 } from "../controllers/users.controller";
@@ -28,5 +29,7 @@ router.get(
   validate(userPublicKeyValidateSchema),
   findPublicKeyByEmailIdController
 );
+
+router.get("/get-project", findAllProjectOfTheUserController);
 
 export = router;
