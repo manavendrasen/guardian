@@ -1,5 +1,6 @@
 import { Role } from "@prisma/client";
 import prisma from "../utils/connectPrisma";
+import { findWebHookUrlOfTheUser } from "./project.service";
 import { findUserByEmail } from "./user.service";
 
 export const createConfig = async (projectId: string, data: any) => {

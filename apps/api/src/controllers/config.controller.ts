@@ -2,6 +2,7 @@ import { Role } from "@prisma/client";
 import { Request, Response } from "express";
 import { ZodError } from "zod";
 import { throwError } from "../helpers/errorHandlers.helpers";
+import { webHookLogger } from "../helpers/webhooks";
 import asyncHandler from "../middlewares/async";
 import { ConfigValidateRequestSchema } from "../Schemas/config.schema";
 import {
@@ -12,7 +13,11 @@ import {
   getAllSecretsFromNameForConfig,
 } from "../service/config.service";
 
-import { findProjectById, memberInProject } from "../service/project.service";
+import {
+  findProjectById,
+  findWebHookUrlOfTheUser,
+  memberInProject,
+} from "../service/project.service";
 
 export const createConfigController = asyncHandler(
   async (
@@ -91,12 +96,20 @@ export const assignMemberToConfigController = asyncHandler(
 export const getConfigSecretsByNameController = asyncHandler(
   async (req: Request, res: Response) => {
     const { projectName, configName } = req.body;
-
+    const user: any = req.user;
     try {
       const secrets = await getAllSecretsFromNameForConfig(
         projectName,
         configName
       );
+      const { webHookUrl }: any = await findWebHookUrlOfTheUser(projectName);
+      console.log(webHookUrl);
+
+      webHookLogger(
+        webHookUrl,
+        `${user.email!} requested for config secrets for ${configName}`
+      );
+
       res.send(secrets);
     } catch (e: any) {
       if (e instanceof ZodError) {

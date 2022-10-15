@@ -1,11 +1,9 @@
+import { throwError } from "../helpers/errorHandlers.helpers";
 import { UserResponseSchema } from "../Schemas/user.schema";
 import prisma from "../utils/connectPrisma";
 import { findUserByEmail } from "./user.service";
 
-export const createProject = async (
-  user: UserResponseSchema,
-  data: any
-) => {
+export const createProject = async (user: UserResponseSchema, data: any) => {
   return await prisma.project.create({
     data: {
       ...data,
@@ -22,42 +20,45 @@ export const findProjectById = async (id: string) => {
   });
 };
 
-export const addMemberToProject = async ({ email, encProjectKey }: { email: string, encProjectKey: string }, projectId: string) => {
+export const addMemberToProject = async (
+  { email, encProjectKey }: { email: string; encProjectKey: string },
+  projectId: string
+) => {
   const member = await findUserByEmail(email);
-  if (!member) return { email, error: "User Not Registered" }
+  if (!member) return { email, error: "User Not Registered" };
   try {
     await prisma.projectTeam.create({
       data: {
         encProjectKey,
         projectId,
-        memberId: member.id
-      }
+        memberId: member.id,
+      },
     });
-    return { email, error: null }
+    return { email, error: null };
   } catch (error) {
-    return { email, error: "User already assigned to same project" }
+    return { email, error: "User already assigned to same project" };
   }
-}
+};
 
 export const memberInProject = async (projectId: string, email: string) => {
   try {
     return await prisma.projectTeam.findMany({
       where: {
         member: {
-          email
+          email,
         },
-        projectId
-      }
+        projectId,
+      },
     });
   } catch (error) {
-    return false
+    return false;
   }
-}
+};
 
 export const getAllottedMembers = async (projectId: string) => {
   return await prisma.project.findUnique({
     where: {
-      id: projectId
+      id: projectId,
     },
     select: {
       teamMember: {
@@ -66,11 +67,26 @@ export const getAllottedMembers = async (projectId: string) => {
             select: {
               email: true,
               id: true,
-              publicKey: true
-            }
-          }
-        }
-      }
-    }
-  })
-}
+              publicKey: true,
+            },
+          },
+        },
+      },
+    },
+  });
+};
+
+export const findWebHookUrlOfTheUser = async (name: string) => {
+  try {
+    return await prisma.project.findUnique({
+      where: {
+        name,
+      },
+      select: {
+        webhookUrl: true,
+      },
+    });
+  } catch (err: any) {
+    throwError(502, err.error);
+  }
+};
