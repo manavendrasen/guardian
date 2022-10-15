@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import React from "react";
+import useConfigStore from "store/configStore";
 
 interface ProjectTileProps {
   id: string;
@@ -13,8 +14,9 @@ const ProjectTile: React.FC<ProjectTileProps> = ({
   description,
 }) => {
   const router = useRouter();
+  const { getAllConfigsForProject } = useConfigStore();
   const routeToProjectPage = () => {
-    // fetch product details
+    getAllConfigsForProject(id);
     router.push(`/project/${id}`);
   };
   return (
