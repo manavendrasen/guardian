@@ -2,7 +2,7 @@ import { LoginResult } from "../common/api/auth";
 
 export type GuardianProjectConfig = {
   project: string;
-  config: string[];
+  config: string;
   ignoreKeys?: string[];
 }
 

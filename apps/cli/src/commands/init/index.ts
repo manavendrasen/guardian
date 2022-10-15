@@ -7,6 +7,8 @@ import {
 } from "../../services/repoService";
 import inquirerPrompt from "inquirer-autocomplete-prompt";
 import { GuardianProjectConfig } from "../../model/GuardianModels";
+import { getAuthTokens } from "../../services/cliService";
+import { StorageService } from "../../common/services/StorageServices";
 
 const qs: QuestionCollection<Answers> = [
   {
@@ -19,6 +21,21 @@ const qs: QuestionCollection<Answers> = [
     type: "input",
     name: "projectName",
     message: "Enter project name:",
+    when: (ans) => ans["projectType"] == true,
+    default: "new-project",
+  },
+
+  {
+    type: "input",
+    name: "projectDescription",
+    message: "Enter project description:",
+    when: (ans) => ans["projectType"] == true,
+    default: "new-project",
+  },
+  {
+    type: "input",
+    name: "projectWebhook",
+    message: "Enter project webhook:",
     when: (ans) => ans["projectType"] == true,
     default: "new-project",
   },
@@ -68,12 +85,32 @@ Create a guardian project or reinitialize an existing one.
   async run(): Promise<void> {
     inquirer.registerPrompt("autocomplete", inquirerPrompt);
 
-    const answers = await inquirer.prompt(qs);
+    // const answers = await inquirer.prompt(qs);
 
+    const answers = {
+      projectName: "guardian",
+      configName: "new-config",
+      projectDescription: "cli based env sharing",
+      projectWebhook: "https://example.com/"
+    };
+    
     const config: GuardianProjectConfig = {
       project: answers.projectName,
-      config: [answers.configName],
+      config: answers.configName,
     };
+
+    const tokens = getAuthTokens();
+    const ss = new StorageService(tokens);
+
+    if (answers.projectName) {
+      const newProject = await ss.createNewProject({
+        name: answers.projectName,
+        description: answers.projectDescription,
+        webhook: answers.projectWebhook
+      });
+
+      console.log(newProject);
+    }
 
     createFile("guardian.json", JSON.stringify(config, null, 4));
 
