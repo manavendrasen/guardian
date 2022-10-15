@@ -2,10 +2,7 @@ import { Role } from "@prisma/client";
 import prisma from "../utils/connectPrisma";
 import { findUserByEmail } from "./user.service";
 
-export const createConfig = async (
-  projectId: string,
-  data: any
-) => {
+export const createConfig = async (projectId: string, data: any) => {
   return await prisma.config.create({
     data: {
       ...data,
@@ -22,21 +19,27 @@ export const findConfigById = async (id: string) => {
   });
 };
 
-
 export const findConfigByIdWithProject = async (id: string) => {
   return await prisma.config.findUnique({
     where: {
-      id
+      id,
     },
     select: {
-      project: true
-    }
-  })
-}
+      project: true,
+    },
+  });
+};
 
-export const assignMemberToConfig = async ({ email, encConfigKey, role }: { email: string, encConfigKey: string, role?: Role }, configId: string) => {
+export const assignMemberToConfig = async (
+  {
+    email,
+    encConfigKey,
+    role,
+  }: { email: string; encConfigKey: string; role?: Role },
+  configId: string
+) => {
   const member = await findUserByEmail(email);
-  if (!member) return { email, error: "User Not Registered" }
+  if (!member) return { email, error: "User Not Registered" };
 
   try {
     await prisma.configTeam.create({
@@ -44,24 +47,24 @@ export const assignMemberToConfig = async ({ email, encConfigKey, role }: { emai
         encConfigKey,
         configId,
         role: role,
-        memberId: member.id
-      }
+        memberId: member.id,
+      },
     });
-    return { email, error: null }
+    return { email, error: null };
   } catch (error) {
-    return { email, error: "User already assigned to same Config" }
+    return { email, error: "User already assigned to same Config" };
   }
-}
+};
 
 export const getAllConfigs = async (projectId: string, memberId: string) => {
   return await prisma.config.findMany({
     where: {
       configMember: {
         some: {
-          memberId
-        }
+          memberId,
+        },
       },
-      projectId
+      projectId,
     },
     select: {
       id: true,
@@ -69,18 +72,51 @@ export const getAllConfigs = async (projectId: string, memberId: string) => {
       name: true,
       configMember: {
         where: {
-          memberId
-        }
-        , select: {
+          memberId,
+        },
+        select: {
           encConfigKey: true,
-          role: true
-        }
+          role: true,
+        },
       },
       _count: {
         select: {
-          secrets: true
-        }
-      }
-    }
-  })
-}
+          secrets: true,
+        },
+      },
+    },
+  });
+};
+export const getAllSecretsFromNameForConfig = async (
+  projectName: string,
+  configName: string
+) => {
+  const project = await prisma.project.findUnique({
+    where: {
+      name: projectName,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  const config = await prisma.config.findMany({
+    where: {
+      projectId: project!.id,
+      name: configName,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return Promise.all(
+    config.map(async (ele: any) => {
+      return await prisma.secret.findMany({
+        where: {
+          configId: ele!.id,
+        },
+      });
+    })
+  );
+};

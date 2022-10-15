@@ -37,11 +37,7 @@ export const userRequestValidateSchema = z.object({
   body: userRequestSchema,
 });
 
-const userEncryptedKeyRequestSchema = z.object({
-  id: z.string({
-    required_error: "Required Field",
-  }),
-});
+const userEncryptedKeyRequestSchema = z.object({});
 
 const userEncryptedKeyResponseSchema = z.object({
   encPrivateKey: z.string({
