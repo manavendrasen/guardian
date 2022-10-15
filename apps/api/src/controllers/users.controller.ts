@@ -10,10 +10,11 @@ import {
 
 export const findEncryptedPrivateByIdController = asyncHandler(
   async (req: Request, res: Response) => {
-    const { id } = req.body;
+    const user: any = req.user;
 
     try {
-      const data = await findEncryptedPrivateById(id);
+      if (!user) throwError(404, "User Not Found");
+      const data = await findEncryptedPrivateById(user.id!);
       res.send(data);
     } catch (e: any) {
       if (e instanceof ZodError) {
