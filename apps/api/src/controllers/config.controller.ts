@@ -102,13 +102,13 @@ export const getConfigSecretsByNameController = asyncHandler(
         projectName,
         configName
       );
-      const { webHookUrl }: any = await findWebHookUrlOfTheUser(projectName);
-      console.log(webHookUrl);
+      // const { webHookUrl }: any = await findWebHookUrlOfTheUser(projectName);
+      // console.log(webHookUrl);
 
-      webHookLogger(
-        webHookUrl,
-        `${user.email!} requested for config secrets for ${configName}`
-      );
+      // webHookLogger(
+      //   webHookUrl,
+      //   `${user.email!} requested for config secrets for ${configName}`
+      // );
 
       res.send(secrets);
     } catch (e: any) {
