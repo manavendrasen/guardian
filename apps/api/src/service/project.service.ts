@@ -1,4 +1,3 @@
-import { throwError } from "../helpers/errorHandlers.helpers";
 import { UserResponseSchema } from "../Schemas/user.schema";
 import prisma from "../utils/connectPrisma";
 import { findUserByEmail } from "./user.service";
