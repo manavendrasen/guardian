@@ -4,7 +4,7 @@ import { ZodError } from "zod";
 import { throwError } from "../helpers/errorHandlers.helpers";
 import asyncHandler from "../middlewares/async";
 import { ConfigValidateRequestSchema } from "../Schemas/config.schema";
-import { assignMembersToConfig, createConfig, findConfigById, findConfigByIdWithProject } from "../service/config.service";
+import { assignMemberToConfig, createConfig, findConfigByIdWithProject } from "../service/config.service";
 import { findProjectById, memberInProject } from "../service/project.service";
 
 export const createConfigController = asyncHandler(
@@ -17,7 +17,7 @@ export const createConfigController = asyncHandler(
     res: Response
   ) => {
     const { projectId } = req.params;
-    const body = req.body;
+    const { encConfigKey, ...data } = req.body;
     const user: any = req.user;
     try {
       const project = await findProjectById(projectId);
@@ -27,7 +27,12 @@ export const createConfigController = asyncHandler(
       const checkMember = await memberInProject(projectId, user.email!)
       if (!checkMember) throwError(404, "User not found in team")
 
-      const config = await createConfig(projectId, body);
+      const config = await createConfig(projectId, data);
+      if (!config) throwError(400, "Config not Created");
+
+      const addToMember = await assignMemberToConfig({ email: user.email, encConfigKey: encConfigKey, role: "OWNER" }, config.id)
+      if (!addToMember) throwError(400, "User is not added in Config Team")
+
       res.status(201).send(config);
     } catch (e: any) {
       if (e instanceof ZodError) {
@@ -52,7 +57,6 @@ export const assignMemberToConfigController = asyncHandler(
 
       if (!user) throwError(404, "Unauthorized User");
 
-      console.log(members, configId)
       const config = await findConfigByIdWithProject(configId);
       if (!config) throwError(404, "Project id not found");
 
@@ -60,7 +64,7 @@ export const assignMemberToConfigController = asyncHandler(
       let response: { email: string, error: null | string }[] = [];
       for (let i = 0; i < members.length; i++) {
         response.push(
-          await assignMembersToConfig(members[i], configId)
+          await assignMemberToConfig(members[i], configId)
         )
       }
 

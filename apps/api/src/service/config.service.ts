@@ -1,11 +1,10 @@
 import { Role } from "@prisma/client";
-import { ConfigRequestSchema } from "../Schemas/config.schema";
 import prisma from "../utils/connectPrisma";
 import { findUserByEmail } from "./user.service";
 
 export const createConfig = async (
   projectId: string,
-  data: ConfigRequestSchema
+  data: any
 ) => {
   return await prisma.config.create({
     data: {
@@ -35,7 +34,7 @@ export const findConfigByIdWithProject = async (id: string) => {
   })
 }
 
-export const assignMembersToConfig = async ({ email, encConfigKey, role }: { email: string, encConfigKey: string, role?: Role }, configId: string) => {
+export const assignMemberToConfig = async ({ email, encConfigKey, role }: { email: string, encConfigKey: string, role?: Role }, configId: string) => {
   const member = await findUserByEmail(email);
   if (!member) return { email, error: "User Not Registered" }
 

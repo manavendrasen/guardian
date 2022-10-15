@@ -6,6 +6,7 @@ const configRequestSchema = z.object({
     required_error: "Config Name Required",
   }),
   environment: z.enum(["PRODUCTION", "STAGING", "DEVELOPMENT"]).optional(),
+  encConfigKey: z.string()
 });
 
 export const configValidateRequestSchema = z.object({
