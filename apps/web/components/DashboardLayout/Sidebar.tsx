@@ -4,24 +4,14 @@ import { useRouter } from "next/router";
 import SidebarLinkGroup from "./SidebarLinkGroup";
 import useDashboardStore from "store/dashboardStore";
 import { FiZap, FiSettings } from "react-icons/fi";
-
-const projects = [
-  {
-    id: "1",
-    name: "Poptalk",
-    description: "Eu mollit id sit cupidatat aliqua.",
-  },
-  {
-    id: "2",
-    name: "Vinyl",
-    description: "Eu mollit id sit cupidatat aliqua.",
-  },
-];
+import useProjectStore from "store/projectStore";
 
 function Sidebar() {
   const { isVisible, setIsVisible } = useDashboardStore();
+  const { projects } = useProjectStore();
   const router = useRouter();
   const { pathname } = router;
+  const { id } = router.query;
 
   const trigger = useRef(null);
   const sidebar = useRef(null);
@@ -44,7 +34,7 @@ function Sidebar() {
         }`}
       >
         {/* Sidebar header */}
-        <div className='flex justify-between mb-10 pr-3 sm:px-2 px-8'>
+        <div className='flex justify-between mb-6 pr-3 sm:px-2 px-8'>
           {/* Close button */}
           <button
             ref={trigger}
@@ -62,13 +52,13 @@ function Sidebar() {
             </svg>
           </button>
           {/* Logo */}
-          {/* <Link href='/' className='block'>
+          <Link href='/' className='block'>
             <p className=' text-white font-medium'>guardian</p>
-          </Link> */}
+          </Link>
         </div>
 
         {/* Links */}
-        <div className='space-y-8 pt-2'>
+        <div className='space-y-8'>
           {/* Pages group */}
           <div>
             {/* <h3 className='text-xs uppercase text-slate-200 font-semibold pl-3'>
@@ -79,7 +69,11 @@ function Sidebar() {
             <ul className='mt-3'>
               {/* Dashboard */}
               <SidebarLinkGroup
-                activeOn={pathname === "/" || pathname.includes("dashboard")}
+                activeOn={
+                  pathname === "/" ||
+                  pathname.includes("project") ||
+                  pathname.includes("config")
+                }
               >
                 {(handleClick: () => void, open: boolean) => {
                   return (
@@ -88,7 +82,8 @@ function Sidebar() {
                         href='#0'
                         className={`block text-slate-100 hover:text-white truncate transition duration-150 ${
                           (pathname === "/" ||
-                            pathname.includes("dashboard")) &&
+                            pathname.includes("project") ||
+                            pathname.includes("config")) &&
                           "hover:text-slate-200"
                         }`}
                         onClick={(e) => {
@@ -123,13 +118,16 @@ function Sidebar() {
                           }`}
                         >
                           {projects.map((project) => (
-                            <li className='mb-1 last:mb-0' key={project.id}>
-                              <Link
-                                href={`/project/${project.id}`}
-                                // className={`block text-slate-400 hover:text-slate-200 transition duration-150 truncate
-                                //   ${true ? "text-indigo-500" : "text-green-500"}`}
-                              >
-                                <span className='block text-slate-100 over:text-primary transition duration-150  text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 cursor-pointer'>
+                            <li
+                              className='mb-1 block text-slate-400 hover:text-slate-200 transition duration-150 truncate'
+                              key={project.id}
+                            >
+                              <Link href={`/project/${project.id}`}>
+                                <span
+                                  className={`block text-slate-100 hover:text-primary transition duration-150  text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 cursor-pointer ${
+                                    id === project.id && "text-primary"
+                                  }`}
+                                >
                                   {project.name}
                                 </span>
                               </Link>
