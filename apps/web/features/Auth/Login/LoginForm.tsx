@@ -26,8 +26,6 @@ const LoginForm: React.FC<LoginFormProps> = () => {
 
   const onSubmit: SubmitHandler<LoginFormResponse> = async (data) => {
     loginUser(data.email, data.password, router);
-    // success("Successfully Logged In");
-    // router.push("/");
   };
 
   return (
