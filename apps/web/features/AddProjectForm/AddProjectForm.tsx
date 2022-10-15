@@ -2,17 +2,21 @@ import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Button from "components/Button/Button";
 import useModal from "store/modalStore";
+import useProjectStore from "store/projectStore";
+import useAlert from "store/alertStore";
 
 interface AddProjectFormProps {}
 
 type AddProjectFormResponse = {
   name: string;
   description: string;
-  webhookUrl: string;
+  webhook: string;
 };
 
 const AddProjectForm: React.FC<AddProjectFormProps> = () => {
   const { hideModal } = useModal();
+  const { success } = useAlert();
+  const { addProject } = useProjectStore();
   const {
     register,
     handleSubmit,
@@ -20,8 +24,8 @@ const AddProjectForm: React.FC<AddProjectFormProps> = () => {
   } = useForm<AddProjectFormResponse>();
 
   const onSubmit: SubmitHandler<AddProjectFormResponse> = (data) => {
-    console.log(JSON.stringify(data, null, 2));
-    // TODO: add project logic
+    addProject(data);
+    success("Successfully added project");
     hideModal();
   };
 
@@ -66,17 +70,17 @@ const AddProjectForm: React.FC<AddProjectFormProps> = () => {
         </div>
         <div>
           <label
-            htmlFor='name'
+            htmlFor='webhook'
             className='block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300'
           >
             Slack Webhook
           </label>
           <input
             type='text'
-            id='name'
+            id='webhook'
             className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
             placeholder='https://hooks.slack.com/...'
-            {...register("webhookUrl")}
+            {...register("webhook")}
           />
         </div>
         {/* <div className='mb-2'>

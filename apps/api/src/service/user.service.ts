@@ -105,7 +105,7 @@ export const findAllProjectOfTheUser = async (id: string) => {
           },
           select: {
             encProjectKey: true,
-
+            project: true,
           },
         },
       },
@@ -114,6 +114,7 @@ export const findAllProjectOfTheUser = async (id: string) => {
     return result?.projectShared.map((p) => {
       return {
         encProjectKey: p.encProjectKey,
+        ...p.project,
       };
     });
   } catch (e: any) {

@@ -44,7 +44,6 @@ export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
     <AlertContext.Provider value={value}>
       {children}
       <ToastContainer
-        theme='dark'
         position='top-right'
         autoClose={2000}
         // hideProgressBar
