@@ -3,7 +3,7 @@ import { UserRequestSchema } from "../Schemas/user.schema";
 import prisma from "../utils/connectPrisma";
 
 export const createUser = async (body: UserRequestSchema) => {
-  const { confirmPassword, ...data } = body;
+  const data= body;
   try {
     return await prisma.user.create({
       data,
@@ -36,7 +36,7 @@ export const authenticateUser = async (
       },
     });
 
-    if (user?.password == masterKeyHash) return user;
+    if (user?.masterKeyHash == masterKeyHash) return user;
   } catch (e) {
     console.log("error", e);
     // throwError(502, e.error);

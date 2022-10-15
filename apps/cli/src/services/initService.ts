@@ -3,9 +3,7 @@ import fuzzy from "fuzzy";
 import path from "path";
 
 export const createFile = (filePath: string, content: string) => {
-  fs.writeFile(filePath, content, () => {
-    console.log("write");
-  });
+  fs.writeFileSync(filePath, content);
 };
 
 export const readFile = async (filePath: string) => {

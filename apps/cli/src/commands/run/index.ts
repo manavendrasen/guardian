@@ -1,4 +1,9 @@
 import { Command, Flags } from "@oclif/core";
+import { homedir } from "os";
+import path from "path";
+import { AuthTokens } from "../../common/services/AuthServices";
+import { StorageService } from "../../common/services/StorageServices";
+import { readFile } from "../../services/initService";
 import { getVarsForConfig } from "../../services/repoService";
 let spawn = require("child_process").spawn,
   ls;
@@ -16,6 +21,18 @@ export default class RunCommand extends Command {
 
   async run(): Promise<void> {
     const { flags } = await this.parse(RunCommand);
+
+    const tokens: AuthTokens = JSON.parse(
+      await readFile(path.join(homedir(), ".guardian.json"))
+    ) as AuthTokens;
+
+    const ss = new StorageService(tokens);
+
+    const project = await ss.createNewProject({
+      name: "new-project",
+      description: "nice project description"
+    })
+    await ss.getProject(project.projectId);
 
     const vars = await getVarsForConfig("", "");
 

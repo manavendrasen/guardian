@@ -26,20 +26,12 @@ export const userResponseSchema = z.object({
   ...user,
 });
 
-const userRequestSchema = z
-  .object({
-    ...user,
-    password: z.string({
-      required_error: "Password is required",
-    }),
-    confirmPassword: z.string({
-      required_error: "Password is required",
-    }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Password do not match",
-    path: ["confirmPassword"],
-  });
+const userRequestSchema = z.object({
+  ...user,
+  masterKeyHash: z.string({
+    required_error: "Password is required",
+  }),
+});
 
 export const userRequestValidateSchema = z.object({
   body: userRequestSchema,

@@ -3,7 +3,7 @@ import { search, writeIntoFile } from "../../services/initService";
 import inquirer, { Answers, QuestionCollection } from "inquirer";
 import inquirerPrompt from "inquirer-autocomplete-prompt";
 import { getConfigForProject } from "../../services/repoService";
-import GuardianConfig from "../../model/GuardianConfig";
+import { GuardianProjectConfig } from "../../model/GuardianModels";
 
 const qs: QuestionCollection<Answers> = [
   {

@@ -8,27 +8,16 @@ import {
   userResponseSchema,
 } from "../Schemas/user.schema";
 import { createJwtForUser } from "../service/auth.service";
-import {
-  authenticateUser,
-  createUser
-} from "../service/user.service";
+import { authenticateUser, createUser } from "../service/user.service";
 
 export const createUserController = asyncHandler(
-  async (
-    req: Request<{}, {}, UserRequestValidateSchema["body"]>,
-    res: Response
-  ) => {
+  async (req: Request, res: Response) => {
     try {
       const user = await createUser(req.body);
-      const userResponse = userResponseSchema.parse(user);
-      res.status(201).send(userResponse);
+      res.status(201).send(user);
     } catch (e: any) {
-      if (e instanceof ZodError) {
-        console.error(e.flatten);
-        throwError(400, "Bad data Input");
-      } else {
-        throwError(409, e.message);
-      }
+      console.log(e);
+      throwError(409, e.message);
     }
   }
 );
