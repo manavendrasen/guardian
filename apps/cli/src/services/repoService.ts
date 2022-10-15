@@ -1,5 +1,14 @@
-export const getUserProjects = () => {
-  return ["Poptalk", "guardian", "health-chain"];
+import { StorageService } from "../common/services/StorageServices";
+import { getAuthTokens } from "./cliService";
+
+export const getUserProjectNames = async (mPass: string) => {
+  const tokens = getAuthTokens();
+
+  const ss = new StorageService(tokens);
+
+  const projects = await ss.getAllProjects(mPass);
+
+  return projects.map(p => p.name);
 };
 
 export const getConfigForProject = (projectId: string) => {

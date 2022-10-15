@@ -3,7 +3,7 @@ import { createFile, search } from "../../services/initService";
 import inquirer, { Answers, QuestionCollection } from "inquirer";
 import {
   getConfigForProject,
-  getUserProjects,
+  getUserProjectNames,
 } from "../../services/repoService";
 import inquirerPrompt from "inquirer-autocomplete-prompt";
 import { GuardianProjectConfig } from "../../model/GuardianModels";
@@ -11,6 +11,11 @@ import { getAuthTokens } from "../../services/cliService";
 import { StorageService } from "../../common/services/StorageServices";
 
 const qs: QuestionCollection<Answers> = [
+  {
+    type: "password",
+    name: "masterPassword",
+    message: "Enter Master Password:",
+  },
   {
     type: "confirm",
     name: "projectType",
@@ -44,7 +49,8 @@ const qs: QuestionCollection<Answers> = [
     name: "projectName",
     message:
       "Select an existing project (list only shows projects you have access to):",
-    source: (_: Answers, input: string) => search(getUserProjects(), input),
+    source: async (ans: Answers, input: string) =>
+      search(await getUserProjectNames(ans["masterPassword"]), input),
     when: (ans) => ans["projectType"] == false,
   },
   {
@@ -85,15 +91,15 @@ Create a guardian project or reinitialize an existing one.
   async run(): Promise<void> {
     inquirer.registerPrompt("autocomplete", inquirerPrompt);
 
-    // const answers = await inquirer.prompt(qs);
+    const answers = await inquirer.prompt(qs);
 
-    const answers = {
-      projectName: "guardian",
-      configName: "new-config",
-      projectDescription: "cli based env sharing",
-      projectWebhook: "https://example.com/"
-    };
-    
+    // const answers = {
+    //   projectName: "guardian",
+    //   configName: "new-config",
+    //   projectDescription: "cli based env sharing",
+    //   projectWebhook: "https://example.com/",
+    // };
+
     const config: GuardianProjectConfig = {
       project: answers.projectName,
       config: answers.configName,
@@ -106,7 +112,7 @@ Create a guardian project or reinitialize an existing one.
       const newProject = await ss.createNewProject({
         name: answers.projectName,
         description: answers.projectDescription,
-        webhook: answers.projectWebhook
+        webhook: answers.projectWebhook,
       });
 
       console.log(newProject);

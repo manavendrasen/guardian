@@ -1,7 +1,7 @@
 import { webcrypto } from "crypto";
 import { readFileSync, writeFileSync } from "fs";
 import { createFile, readFile } from "../../services/initService";
-import { createProject } from "../api/project";
+import { createProject, getAllProjects } from "../api/project";
 import { CryptoFunctions } from "../cryptoFunctions";
 import { Utils } from "../utils";
 import { AuthTokens } from "./AuthServices";
@@ -13,12 +13,20 @@ export type CreateProjectMeta = {
   webhook: string;
 };
 
-export type Project = {
+export type EncryptedProject = {
   projectId: string;
   encryptedProjectKey: string;
   encryptedName: string;
   encryptedDescription: string;
   encryptedWebhook: string;
+};
+
+export type Project = {
+  id: string;
+  name: string;
+  description: string;
+  webhookUrl: string;
+  encryptedProjectKey: string;
 };
 
 export type CreateConfigMeta = {
@@ -37,7 +45,9 @@ export class StorageService {
     this.tokens = tokens;
   }
 
-  async createNewProject(projectMeta: CreateProjectMeta): Promise<Project> {
+  async createNewProject(
+    projectMeta: CreateProjectMeta
+  ): Promise<EncryptedProject> {
     const projectKeyStr = await this.cs.getProjectKey();
 
     const encryptedProjectKey = await this.cs.getEncryptedProjectKey(
@@ -79,12 +89,62 @@ export class StorageService {
       encryptedProjectKey,
       encryptedName: project.name,
       encryptedDescription: project.description,
-      encryptedWebhook: project.webhookUrl
+      encryptedWebhook: project.webhookUrl,
     };
   }
 
-  async getProject(projectId: string) {
-    const project = readFile("project.txt");
-    console.log(project);
+  async getAllProjects(masterPassword: string): Promise<Project[]> {
+    const encryptedProjects = await getAllProjects(this.tokens.accessToken);
+
+    const mKey = await this.cs.createMasterPasswordKey(
+      this.tokens.email,
+      masterPassword
+    );
+
+    const privateKey = await this.cs.getPrivateKey(
+      this.tokens.encryptedPrivateKey,
+      mKey
+    );
+
+    const k: Project[] = [];
+    for (let i = 0; i < encryptedProjects.length; i++) {
+      const encProj = encryptedProjects[i];
+      const nameBuf = Utils.fromB64ToBuffer(encProj.name);
+      const descBuf = Utils.fromB64ToBuffer(encProj.description);
+      const hookBuf = Utils.fromB64ToBuffer(encProj.webhookUrl);
+      const privateKeyBuf = Utils.fromB64ToBuffer(privateKey);
+
+      const decNameBuf = await this.cf.decrypt(
+        nameBuf,
+        privateKeyBuf,
+        "AES-GCP"
+      );
+      const decDescBuf = await this.cf.decrypt(
+        descBuf,
+        privateKeyBuf,
+        "AES-GCP"
+      );
+      const decHookBuf = await this.cf.decrypt(
+        hookBuf,
+        privateKeyBuf,
+        "AES-GCP"
+      );
+
+      const name = Utils.fromBufferToString(decNameBuf);
+      const desc = Utils.fromBufferToString(decDescBuf);
+      const hook = Utils.fromBufferToString(decHookBuf);
+
+      const res = {
+        id: encProj.id,
+        name,
+        description: desc,
+        webhookUrl: hook,
+        encryptedProjectKey: encProj.encryptedProjectKey,
+      };
+
+      k[i] = res;
+    }
+
+    return k;
   }
 }
