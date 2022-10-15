@@ -3,7 +3,7 @@ import { ZodError } from "zod";
 import { throwError } from "../helpers/errorHandlers.helpers";
 import asyncHandler from "../middlewares/async";
 import { ProjectValidateSchema } from "../Schemas/project.schema";
-import { createProject, findProjectById, addMemberToProject } from "../service/project.service";
+import { createProject, findProjectById, addMemberToProject, getAllottedMembers } from "../service/project.service";
 
 export const createProjectController = asyncHandler(
     async (
@@ -56,6 +56,30 @@ export const addMemberToProjectController = asyncHandler(async (req: Request<{ p
                 )
             }
             res.send(response);
+        } catch (e: any) {
+            if (e instanceof ZodError) {
+                console.error(e.flatten);
+                throwError(400, "Bad data Input");
+            } else {
+                throwError(409, e.message);
+            }
+        }
+    }
+})
+
+
+export const getAllottedMemberProjectController = asyncHandler(async (req: Request<{ projectId: string }>, res: Response) => {
+    {
+        const { projectId } = req.params;
+        const user: any = req.user;
+
+        try {
+            // console.log("test")
+            if (!user) throwError(404, "Unauthorized User");
+
+            const getMembers = await getAllottedMembers(projectId)
+
+            res.send(getMembers);
         } catch (e: any) {
             if (e instanceof ZodError) {
                 console.error(e.flatten);
