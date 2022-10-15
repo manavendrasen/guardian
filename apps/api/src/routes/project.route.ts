@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createProjectController } from "../controllers/project.controller";
+import { addMemberToProjectController, createProjectController } from "../controllers/project.controller";
 import validate from "../middlewares/validateResources";
 import { projectValidateSchema } from "../Schemas/project.schema";
 
@@ -10,5 +10,7 @@ router.post(
   validate(projectValidateSchema),
   createProjectController
 );
+
+router.post('/add-member/:projectId', addMemberToProjectController)
 
 export default router;
