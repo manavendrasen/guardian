@@ -26,23 +26,47 @@ export const userResponseSchema = z.object({
   ...user,
 });
 
-const userRequestSchema = z
-  .object({
-    ...user,
-    password: z.string({
-      required_error: "Password is required",
-    }),
-    confirmPassword: z.string({
-      required_error: "Password is required",
-    }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Password do not match",
-    path: ["confirmPassword"],
-  });
+const userRequestSchema = z.object({
+  ...user,
+  masterKeyHash: z.string({
+    required_error: "Password is required",
+  }),
+});
 
 export const userRequestValidateSchema = z.object({
   body: userRequestSchema,
+});
+
+const userEncryptedKeyRequestSchema = z.object({
+  id: z.string({
+    required_error: "Required Field",
+  }),
+});
+
+const userEncryptedKeyResponseSchema = z.object({
+  encPrivateKey: z.string({
+    invalid_type_error: "Correct Id is required",
+  }),
+});
+
+export const userEncryptedKeyValidateSchema = z.object({
+  body: userEncryptedKeyRequestSchema,
+});
+
+const userPublicKeyRequestSchema = z.object({
+  email: z.string({
+    required_error: "Required Field",
+  }),
+});
+
+const userPublicKeyResponseSchema = z.object({
+  publicKey: z.string({
+    invalid_type_error: "Correct email is required",
+  }),
+});
+
+export const userPublicKeyValidateSchema = z.object({
+  body: userPublicKeyRequestSchema,
 });
 
 // const userSchema = z.object({
@@ -58,3 +82,27 @@ export type UserRequestValidateSchema = z.infer<
 export type UserResponseSchema = z.infer<typeof userResponseSchema>;
 
 export type UserRequestSchema = z.infer<typeof userRequestSchema>;
+
+export type UserEncryptedKeyRequestSchema = z.infer<
+  typeof userEncryptedKeyRequestSchema
+>;
+
+export type UserEncryptedKeyResponseSchema = z.infer<
+  typeof userEncryptedKeyResponseSchema
+>;
+
+export type UserEncryptedKeyValidateSchema = z.infer<
+  typeof userEncryptedKeyValidateSchema
+>;
+
+export type UserPublicKeyRequestSchema = z.infer<
+  typeof userPublicKeyRequestSchema
+>;
+
+export type UserPublicKeyResponseSchema = z.infer<
+  typeof userPublicKeyResponseSchema
+>;
+
+export type UserPublicKeyValidateSchema = z.infer<
+  typeof userPublicKeyValidateSchema
+>;

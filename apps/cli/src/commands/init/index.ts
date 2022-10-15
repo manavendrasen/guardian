@@ -6,7 +6,7 @@ import {
   getUserProjects,
 } from "../../services/repoService";
 import inquirerPrompt from "inquirer-autocomplete-prompt";
-import GuardianConfig from "../../model/GuardianConfig";
+import { GuardianProjectConfig } from "../../model/GuardianModels";
 
 const qs: QuestionCollection<Answers> = [
   {
@@ -70,7 +70,7 @@ Create a guardian project or reinitialize an existing one.
 
     const answers = await inquirer.prompt(qs);
 
-    const config: GuardianConfig = {
+    const config: GuardianProjectConfig = {
       project: answers.projectName,
       config: [answers.configName],
     };

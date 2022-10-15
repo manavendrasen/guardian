@@ -1,5 +1,9 @@
 import { Command, Flags } from "@oclif/core";
 import inquirer, { Answers, QuestionCollection } from "inquirer";
+import { homedir } from "os";
+import path from "path";
+import { AuthServices } from "../../common/services/AuthServices";
+import { createFile } from "../../services/initService";
 
 const qs: QuestionCollection<Answers> = [
   {
@@ -20,6 +24,13 @@ export default class LoginCommand extends Command {
   async run(): Promise<void> {
     const answers = await inquirer.prompt(qs);
 
-    console.log(answers);
+    const as = new AuthServices();
+    const result = await as.login(answers.email, answers.masterPassword)
+
+    if (result.success == true) {
+      createFile(path.join(homedir(), ".guardian.json"), JSON.stringify(result.tokens))
+      this.log("Logged in successfully.")
+    }
+    else this.log("Incorrect credentials.");
   }
 }
