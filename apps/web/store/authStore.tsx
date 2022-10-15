@@ -27,6 +27,8 @@ const useAuthStore = create<TAuth>((set, get) => ({
     const as = new AuthServices();
     const res = await as.login(email, password);
 
+    console.log(res);
+    
     get().setUser(res.tokens!);
     get().setAccessToken(res.tokens!.accessToken);
     const mKey = await as.cs.createMasterPasswordKey(email, password);
