@@ -1,6 +1,8 @@
 import { addMemberToProject } from "requests/projectRequests";
 import { Project } from "types/Project";
 import create from "zustand";
+import { StorageService } from "common/services/StorageServices";
+import useAuthStore from "./authStore";
 
 const sampleProject = {
   id: "1",
@@ -21,6 +23,12 @@ const sampleProjects = [
   } as Project,
 ];
 
+type AddProjectFormResponse = {
+  name: string;
+  description: string;
+  webhook: string;
+};
+
 type TProject = {
   loading: boolean;
   setLoading: (loading: boolean) => void;
@@ -29,6 +37,8 @@ type TProject = {
   projects: Project[];
   setProjects: (projects: Project[]) => void;
   addMembersToProject: (members: string[]) => void;
+  addProject: (payload: AddProjectFormResponse) => void;
+  getAllProjects: () => void;
 };
 
 const useProjectStore = create<TProject>((set, get) => ({
@@ -64,6 +74,27 @@ const useProjectStore = create<TProject>((set, get) => ({
     } else {
       get().setLoading(false);
       // return false;
+    }
+  },
+  addProject: (payload: AddProjectFormResponse) => {
+    const { user } = useAuthStore.getState();
+    if (user) {
+      const ss = new StorageService(user);
+      ss.createNewProject(payload);
+    } else {
+      console.error("User not found.");
+    }
+  },
+  getAllProjects: async () => {
+    const { masterPasswordKey, user } = useAuthStore.getState();
+    console.log("User detets", user, masterPasswordKey);
+
+    if (masterPasswordKey && user) {
+      const ss = new StorageService(user);
+      const res = await ss.getAllProjects(masterPasswordKey);
+      console.log("getAllProjects", res);
+    } else {
+      console.error("User and master password not found.");
     }
   },
 }));

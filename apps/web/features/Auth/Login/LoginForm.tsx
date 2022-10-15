@@ -3,6 +3,9 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import Button from "components/Button/Button";
 import useModal from "store/modalStore";
 import Link from "next/link";
+import useAuthStore from "store/authStore";
+import { useRouter } from "next/router";
+import useAlert from "store/alertStore";
 
 interface LoginFormProps {}
 
@@ -12,15 +15,19 @@ type LoginFormResponse = {
 };
 
 const LoginForm: React.FC<LoginFormProps> = () => {
+  const { loginUser } = useAuthStore();
+  const { success } = useAlert();
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormResponse>();
 
-  const onSubmit: SubmitHandler<LoginFormResponse> = (data) => {
-    console.log(JSON.stringify(data, null, 2));
-    // TODO: add logic
+  const onSubmit: SubmitHandler<LoginFormResponse> = async (data) => {
+    loginUser(data.email, data.password, router);
+    // success("Successfully Logged In");
+    // router.push("/");
   };
 
   return (

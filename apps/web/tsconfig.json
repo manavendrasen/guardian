@@ -17,6 +17,7 @@
     "downlevelIteration": true,
     "baseUrl": ".",
     "paths": {
+      "common": ["common/*"],
       "components/*": ["components/*"],
       "contexts/*": ["contexts/*"],
       "features/*": ["features/*"],

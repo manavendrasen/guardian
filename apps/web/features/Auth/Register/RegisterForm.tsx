@@ -3,6 +3,8 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import Button from "components/Button/Button";
 import useModal from "store/modalStore";
 import Link from "next/link";
+import useAuthStore from "store/authStore";
+import useAlert from "store/alertStore";
 
 interface RegisterFormProps {}
 
@@ -13,6 +15,8 @@ type RegisterFormResponse = {
 };
 
 const RegisterForm: React.FC<RegisterFormProps> = () => {
+  const { registerUser } = useAuthStore();
+  const { error } = useAlert();
   const {
     register,
     handleSubmit,
@@ -20,8 +24,11 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
   } = useForm<RegisterFormResponse>();
 
   const onSubmit: SubmitHandler<RegisterFormResponse> = (data) => {
-    console.log(JSON.stringify(data, null, 2));
-    // TODO: add logic
+    if (data.password === data.passwordRepeat) {
+      registerUser(data.email, data.password);
+    } else {
+      error("Password don't match");
+    }
   };
 
   return (
