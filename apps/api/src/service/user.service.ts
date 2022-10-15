@@ -1,5 +1,9 @@
 import { throwError } from "../helpers/errorHandlers.helpers";
-import { UserRequestSchema } from "../Schemas/user.schema";
+import {
+  UserRequestSchema,
+  UserEncryptedKeyRequestSchema,
+  UserEncryptedKeyResponseSchema,
+} from "../Schemas/user.schema";
 import prisma from "../utils/connectPrisma";
 
 export const createUser = async (body: UserRequestSchema) => {
@@ -48,6 +52,36 @@ export const findUserById = async (id: string) => {
     return await prisma.user.findUnique({
       where: {
         id,
+      },
+    });
+  } catch (e: any) {
+    throwError(502, e.error);
+  }
+};
+
+export const findEncryptedPrivateById = async (id: string) => {
+  try {
+    return await prisma.user.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        encPrivateKey: true,
+      },
+    });
+  } catch (e: any) {
+    throwError(502, e.error);
+  }
+};
+
+export const findPublicKeyByEmail = async (email: string) => {
+  try {
+    return await prisma.user.findUnique({
+      where: {
+        email,
+      },
+      select: {
+        publicKey: true,
       },
     });
   } catch (e: any) {
