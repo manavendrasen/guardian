@@ -3,20 +3,23 @@ import { ZodError } from "zod";
 import { throwError } from "../helpers/errorHandlers.helpers";
 import asyncHandler from "../middlewares/async";
 import { ProjectValidateSchema } from "../Schemas/project.schema";
-import { createProject, findProjectById, isMemberAddedToProject } from "../service/project.service";
+import { createProject, findProjectById, addMemberToProject } from "../service/project.service";
 
 export const createProjectController = asyncHandler(
     async (
         req: Request<{}, {}, ProjectValidateSchema["body"]>,
         res: Response
     ) => {
-        const body = req.body;
+        const { encProjectKey, ...data } = req.body;
         const user: any = req.user;
 
         try {
-            // console.log("test")
             if (!user) throwError(404, "Unauthorized User");
-            const project = await createProject(user, body);
+            const project = await createProject(user!, data);
+            if (!project) throwError(400, "Project not Created");
+
+            const addToMember = addMemberToProject({ email: user!.email, encProjectKey: encProjectKey }, project.id)
+            if (!addToMember) throwError(400, "User is not added in Project Team")
             res.send(project);
         } catch (e: any) {
             if (e instanceof ZodError) {
@@ -48,7 +51,7 @@ export const addMemberToProjectController = asyncHandler(async (req: Request<{ p
             let response: { email: string, error: null | string }[] = [];
             for (let i = 0; i < members.length; i++) {
                 response.push(
-                    await isMemberAddedToProject(members[i], projectId)
+                    await addMemberToProject(members[i], projectId)
                 )
             }
             res.send(response);

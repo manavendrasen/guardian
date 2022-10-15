@@ -1,11 +1,10 @@
-import { ProjectRequestSchema } from "../Schemas/project.schema";
 import { UserResponseSchema } from "../Schemas/user.schema";
 import prisma from "../utils/connectPrisma";
 import { findUserByEmail } from "./user.service";
 
 export const createProject = async (
   user: UserResponseSchema,
-  data: ProjectRequestSchema
+  data: any
 ) => {
   return await prisma.project.create({
     data: {
@@ -23,7 +22,7 @@ export const findProjectById = async (id: string) => {
   });
 };
 
-export const isMemberAddedToProject = async ({ email, encProjectKey }: { email: string, encProjectKey: string }, projectId: string) => {
+export const addMemberToProject = async ({ email, encProjectKey }: { email: string, encProjectKey: string }, projectId: string) => {
   const member = await findUserByEmail(email);
   if (!member) return { email, error: "User Not Registered" }
   try {
