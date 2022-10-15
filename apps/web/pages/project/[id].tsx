@@ -3,14 +3,17 @@ import ConfigTile from "components/ConfigTile/ConfigTile";
 import DashboardLayout from "components/DashboardLayout/DashboardLayout";
 import NextHead from "components/NextHead/NextHead";
 import PageHeader from "components/PageHeader/PageHeader";
+import AddMemberToProjectForm from "features/AddMemberToProject/AddMemberToProject";
 import React from "react";
 import { FiPlus, FiGlobe, FiUsers, FiSettings } from "react-icons/fi";
+import useModal from "store/modalStore";
 import useProjectStore from "store/projectStore";
 
 interface ProjectIdProps {}
 
 const ProjectId: React.FC<ProjectIdProps> = () => {
   const { project } = useProjectStore();
+  const { showModal } = useModal();
   return (
     <>
       <NextHead />
@@ -20,7 +23,11 @@ const ProjectId: React.FC<ProjectIdProps> = () => {
             <SecondaryButton onClick={() => {}}>
               <FiSettings /> Settings
             </SecondaryButton>
-            <SecondaryButton onClick={() => {}}>
+            <SecondaryButton
+              onClick={() => {
+                showModal(<AddMemberToProjectForm />);
+              }}
+            >
               <FiUsers /> Members
             </SecondaryButton>
             <SecondaryButton onClick={() => {}}>
