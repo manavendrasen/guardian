@@ -43,14 +43,10 @@ export type EncryptedConfig = {
 };
 
 export type Secret = {
-  id: string;
   name: string;
   value: string;
   comment: string;
-  configId: string;
-  createdAt: string;
-  updatedAt: string;
-}
+};
 
 export class StorageService {
   private cs: CryptoServices;
@@ -229,6 +225,8 @@ export class StorageService {
       mKey
     );
 
+    console.log("p", privateKey);
+
     const configKey = await this.cs.decryptConfigKey(encConfigKey, privateKey);
     const configKeyBuf = decode(configKey);
 
@@ -236,9 +234,9 @@ export class StorageService {
     const valueBuf = Utils.fromStringToBuffer(secret.value);
     const commentBuf = Utils.fromStringToBuffer(secret.comment);
 
-    const names =  await this.cf.encrypt(nameBuf, configKeyBuf, "AES-GCP");
-    const value =  await this.cf.encrypt(valueBuf, configKeyBuf, "AES-GCP");
-    const comment =  await this.cf.encrypt(commentBuf, configKeyBuf, "AES-GCP");
+    const names = await this.cf.encrypt(nameBuf, configKeyBuf, "AES-GCP");
+    const value = await this.cf.encrypt(valueBuf, configKeyBuf, "AES-GCP");
+    const comment = await this.cf.encrypt(commentBuf, configKeyBuf, "AES-GCP");
 
     const nameStr = encode(names);
     const valueStr = encode(value);
@@ -249,13 +247,13 @@ export class StorageService {
       name: nameStr,
       value: valueStr,
       comment: commentStr,
-    }
+    };
   }
 
   async decryptAllSecrets(
     encConfigKey: string,
     secrets: Array<Secret>,
-    mKey: string,
+    mKey: string
   ) {
     const privateKey = await this.cs.getPrivateKey(
       this.tokens.encryptedPrivateKey,
@@ -274,7 +272,11 @@ export class StorageService {
 
       const name = await this.cf.decrypt(nameBuf, configKeyBuf, "AES-GCP");
       const value = await this.cf.decrypt(valueBuf, configKeyBuf, "AES-GCP");
-      const comment = await this.cf.decrypt(commentBuf, configKeyBuf, "AES-GCP");
+      const comment = await this.cf.decrypt(
+        commentBuf,
+        configKeyBuf,
+        "AES-GCP"
+      );
 
       const nameStr = Utils.fromBufferToString(name);
       const valueStr = Utils.fromBufferToString(value);
@@ -283,7 +285,7 @@ export class StorageService {
       k[i] = {
         name: nameStr,
         value: valueStr,
-        comment: commentStr
+        comment: commentStr,
       };
     }
 

@@ -3,6 +3,7 @@ export interface Config {
   environment: string;
   name: string;
   encryptedConfigKey: string;
+  configMember: any;
   _count?: {
     secrets: number;
   };

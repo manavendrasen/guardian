@@ -3,6 +3,7 @@ import create from "zustand";
 import * as REQUESTS from "requests/secretRequests";
 import useAuthStore from "./authStore";
 import useConfigStore from "./configStore";
+import { StorageService } from "common/services/StorageServices";
 
 type TSecret = {
   secret: Secret | null;
@@ -27,34 +28,46 @@ const useSecretStore = create<TSecret>((set, get) => ({
     set((state: TSecret) => ({ ...state, secrets: secrets }));
   },
   addSecret: async (secret: Secret) => {
-    const user = useAuthStore.getState().user;
+    const { user, masterPasswordKey } = useAuthStore.getState();
     const config = useConfigStore.getState().config;
-    if (user) {
-      await REQUESTS.addSecret(
-        config!.id,
-        {
-          name: secret.name,
-          value: secret.value,
-          comment: secret.comment,
-        },
-        {
-          headers: { Authorization: `Bearer ${user.accessToken}` },
-        }
+
+    console.log(config);
+
+    if (user && config && masterPasswordKey) {
+      const ss = new StorageService(user);
+      const res = await ss.encryptSecret(
+        config.configMember[0].encConfigKey,
+        secret,
+        masterPasswordKey
       );
+
+      console.log("ADD SEX", res);
+
+      await REQUESTS.addSecret(config!.id, res, {
+        headers: { Authorization: `Bearer ${user.accessToken}` },
+      });
     } else {
       console.error("User Not Found");
     }
   },
   getSecrets: async () => {
     const config = useConfigStore.getState().config;
-    const user = useAuthStore.getState().user;
-    if (user) {
+    const { user, masterPasswordKey } = useAuthStore.getState();
+    if (user && config && masterPasswordKey) {
       const res = await REQUESTS.getAllSecretForConfig(config!.id, {
         headers: { Authorization: `Bearer ${user.accessToken}` },
       });
 
       console.log("getSecrets", res.secrets);
-      get().setSecrets(res.secrets);
+
+      const sc = new StorageService(user);
+      const decryptedSecret = await sc.decryptAllSecrets(
+        config.configMember[0].encConfigKey,
+        res.secrets,
+        masterPasswordKey
+      );
+
+      get().setSecrets(decryptedSecret);
     } else {
       console.error("User Not Found");
     }
