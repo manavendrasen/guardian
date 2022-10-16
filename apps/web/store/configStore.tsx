@@ -8,6 +8,8 @@ import {
 import * as REQUESTS from "requests/configRequests";
 import { Config } from "types/Config";
 import useProjectStore from "./projectStore";
+import useAuthStore from "./authStore";
+import { CryptoServices } from "common/services/CryptoServices";
 
 interface ICreateConfigPayload {
   name: string;
@@ -26,8 +28,11 @@ type TConfig = {
   setStagingConfigs: (configs: Config[]) => void;
   setProductionConfigs: (configs: Config[]) => void;
   setConfig: (config: Config) => void;
-  addConfig: (payload: ICreateConfigPayload) => void;
-  getAllConfigsForProject: (projectId: string) => void;
+  addConfig: (
+    payload: ICreateConfigPayload,
+    callback: (msg: string) => void
+  ) => void;
+  getAllConfigsForProject: (projectId: string, router: any) => void;
 };
 
 const useConfigStore = create<TConfig>((set, get) => ({
@@ -54,35 +59,56 @@ const useConfigStore = create<TConfig>((set, get) => ({
   setLoading: (loading) => {
     set((state: TConfig) => ({ ...state, loading: loading }));
   },
-  addConfig: async (payload) => {
+  addConfig: async (payload, callback) => {
+    const { user } = useAuthStore.getState();
+    const publicKey = user?.publicKey;
     const projectId = useProjectStore.getState().project?.id;
-    if (projectId) {
-      await REQUESTS.addConfig(projectId, {
-        name: payload.name,
-        description: payload.description,
-        environment: Environment[payload.environment],
-        // encConfigKey: TODO encConfigKey,
-      });
+    if (projectId && user && publicKey) {
+      const cs = new CryptoServices(window.crypto);
+      const configKey = await cs.getConfigKey();
+
+      const encConfigKey = await cs.getEncryptedConfigKey(configKey, publicKey);
+
+      await REQUESTS.addConfig(
+        projectId,
+        {
+          name: payload.name,
+          // description: payload.description,
+          environment: Environment[payload.environment],
+          encConfigKey,
+        },
+        {
+          headers: { Authorization: `Bearer ${user.accessToken}` },
+        }
+      );
+      callback(`Successfully Added Config`);
     } else {
       console.error("Project ID Not Set");
     }
   },
-  getAllConfigsForProject: async (projectId: string) => {
-    const res = await REQUESTS.getAllConfigForProject(projectId);
-    const fetchedDevelopmentConfigs = res.filter(
-      (el: Config) => el.environment === DEVELOPMENT
-    );
-    const fetchedProductionConfig = res.filter(
-      (el: Config) => el.environment === PRODUCTION
-    );
-    const fetchedStagingConfigs = res.filter(
-      (el: Config) => el.environment === STAGING
-    );
+  getAllConfigsForProject: async (projectId: string, router: any) => {
+    const { user } = useAuthStore.getState();
+    const res = await REQUESTS.getAllConfigForProject(projectId, {
+      headers: { Authorization: `Bearer ${user!.accessToken}` },
+    });
 
-    get().setDevelopmentConfigs(fetchedDevelopmentConfigs);
-    get().setStagingConfigs(fetchedStagingConfigs);
-    get().setProductionConfigs(fetchedProductionConfig);
+    // if
+    // const fetchedDevelopmentConfigs = res.filter(
+    //   (el: Config) => el.environment === DEVELOPMENT
+    // );
+    // const fetchedProductionConfig = res.filter(
+    //   (el: Config) => el.environment === PRODUCTION
+    // );
+    // const fetchedStagingConfigs = res.filter(
+    //   (el: Config) => el.environment === STAGING
+    // );
+
+    // get().setDevelopmentConfigs(fetchedDevelopmentConfigs);
+    // get().setStagingConfigs(fetchedStagingConfigs);
+    // get().setProductionConfigs(fetchedProductionConfig);
     console.log("getAllConfigsForProject", res);
+
+    router.push(`/project/${projectId}`);
   },
 }));
 

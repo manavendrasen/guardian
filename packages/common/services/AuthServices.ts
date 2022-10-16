@@ -31,8 +31,8 @@ export class AuthServices {
 
   async signUp(email: string, password: string): Promise<SignUpResult> {
     const rsaKeys = await this.cf.generateRSAKeyPair();
-    const publicKey = Utils.fromBufferToB64(rsaKeys[0]);
-    const privateKey = Utils.fromBufferToB64(rsaKeys[1]);
+    const publicKey = encode(rsaKeys[0]);
+    const privateKey = encode(rsaKeys[1]);
 
     const mKey = await this.cs.createMasterPasswordKey(email, password);
     const mHash = await this.cs.createMasterPasswordHash(mKey, password);

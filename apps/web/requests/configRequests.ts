@@ -1,10 +1,12 @@
 import API from "./api";
 
-export async function addConfig(projectId: string, data: any) {
+export async function addConfig(projectId: string, data: any, config: any) {
   try {
-    const res = await API.post(`/config/create-config/${projectId}`, {
-      ...data,
-    });
+    const res = await API.post(
+      `/config/create-config/${projectId}`,
+      data,
+      config
+    );
 
     return res.data;
   } catch (error) {
@@ -12,9 +14,9 @@ export async function addConfig(projectId: string, data: any) {
   }
 }
 
-export async function getAllConfigForProject(projectId: string) {
+export async function getAllConfigForProject(projectId: string, config: any) {
   try {
-    const res = await API.get(`/config/get-all-configs/${projectId}`);
+    const res = await API.get(`/config/get-all-configs/${projectId}`, config);
     return res.data;
   } catch (error) {
     console.error(error);

@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import Button, { SecondaryButton } from "components/Button/Button";
 import ConfigTile from "components/ConfigTile/ConfigTile";
 import DashboardLayout from "components/DashboardLayout/DashboardLayout";
@@ -6,16 +7,21 @@ import PageHeader from "components/PageHeader/PageHeader";
 import { Environment } from "constants/Environments";
 import AddConfigForm from "features/AddConfig/AddConfig";
 import AddMemberToProjectForm from "features/AddMemberToProject/AddMemberToProject";
-import React from "react";
 import { FiPlus, FiGlobe, FiUsers, FiSettings } from "react-icons/fi";
 import useModal from "store/modalStore";
 import useProjectStore from "store/projectStore";
+import useConfigStore from "store/configStore";
 
 interface ProjectIdProps {}
 
 const ProjectId: React.FC<ProjectIdProps> = () => {
   const { project } = useProjectStore();
+  const { getAllConfigsForProject } = useConfigStore();
   const { showModal } = useModal();
+  // useEffect(() => {
+  // getAllConfigsForProject();
+  // }, []);
+
   return (
     <>
       <NextHead />

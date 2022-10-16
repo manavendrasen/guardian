@@ -2,6 +2,7 @@ import { CryptoFunctions } from "../cryptoFunctions";
 import { Utils } from "../utils";
 import { CryptoServices } from "./CryptoServices";
 import { loginUser, SignUpResult, signUpUser } from "../api/auth";
+import { encode, decode } from "base64-arraybuffer";
 
 export type AuthTokens = {
   email: string;
@@ -27,8 +28,8 @@ export class AuthServices {
 
   async signUp(email: string, password: string): Promise<SignUpResult> {
     const rsaKeys = await this.cf.generateRSAKeyPair();
-    const publicKey = Utils.fromBufferToB64(rsaKeys[0]);
-    const privateKey = Utils.fromBufferToB64(rsaKeys[1]);
+    const publicKey = encode(rsaKeys[0]);
+    const privateKey = encode(rsaKeys[1]);
 
     const mKey = await this.cs.createMasterPasswordKey(email, password);
     const mHash = await this.cs.createMasterPasswordHash(mKey, password);

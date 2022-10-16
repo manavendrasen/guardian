@@ -1,31 +1,29 @@
 import { useRouter } from "next/router";
 import React from "react";
 import useConfigStore from "store/configStore";
+import useProjectStore from "store/projectStore";
+import { Project } from "types/Project";
 
 interface ProjectTileProps {
-  id: string;
-  title: string;
-  description: string;
+  project: Project;
 }
 
-const ProjectTile: React.FC<ProjectTileProps> = ({
-  id,
-  title,
-  description,
-}) => {
+const ProjectTile: React.FC<ProjectTileProps> = ({ project }) => {
   const router = useRouter();
   const { getAllConfigsForProject } = useConfigStore();
+  const { setProject } = useProjectStore();
   const routeToProjectPage = () => {
-    getAllConfigsForProject(id);
-    router.push(`/project/${id}`);
-  };
+    setProject(project);
+    router.push(`/project/${project.id}`);
+    // getAllConfigsForProject(project.id, router);
+  };;
   return (
     <div
       className='bg-slate-100 flex flex-col gap-2 p-6 rounded-md hover:border-primary focus:border-2 hover:border-2 duration-100'
       onClick={routeToProjectPage}
     >
-      <h5 className='text-lg font-medium'>{title}</h5>
-      <p className='text-slate-500'>{description}</p>
+      <h5 className='text-lg font-medium'>{project.name}</h5>
+      <p className='text-slate-500'>{project.description}</p>
     </div>
   );
 };

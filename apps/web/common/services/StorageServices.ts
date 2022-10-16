@@ -3,6 +3,7 @@ import { CryptoFunctions } from "../cryptoFunctions";
 import { Utils } from "../utils";
 import { AuthTokens } from "./AuthServices";
 import { CryptoServices } from "./CryptoServices";
+import { encode, decode } from "base64-arraybuffer";
 
 export type CreateProjectMeta = {
   name: string;
@@ -42,6 +43,9 @@ export class StorageService {
     this.tokens = tokens;
   }
 
+  // enc = new TextEncoder();
+  // dec = new TextDecoder("utf8");
+
   async createNewProject(
     projectMeta: CreateProjectMeta
   ): Promise<EncryptedProject> {
@@ -52,7 +56,7 @@ export class StorageService {
       this.tokens.publicKey
     );
 
-    const projectKeyBuf = Utils.fromB64ToBuffer(projectKeyStr);
+    const projectKeyBuf = decode(projectKeyStr);
     const nameBuf = Utils.fromStringToBuffer(projectMeta.name);
     const descriptionBuf = Utils.fromStringToBuffer(projectMeta.description);
     const webhookBuf = Utils.fromStringToBuffer(projectMeta.webhook);
@@ -69,9 +73,12 @@ export class StorageService {
       "AES-GCP"
     );
 
-    const encNameStr = Utils.fromBufferToB64(encNameBuf);
-    const encDescriptionStr = Utils.fromBufferToB64(encDescriptionBuf);
-    const encWebhookStr = Utils.fromBufferToB64(encWebhookBuf);
+    const encNameStr = encode(encNameBuf);
+    const encDescriptionStr = encode(encDescriptionBuf);
+    const encWebhookStr = encode(encWebhookBuf);
+    // const encNameStr = this.dec.decode(encNameBuf);
+    // const encDescriptionStr = decode(this.dec.decode(encDescriptionBuf));
+    // const encWebhookStr = decode(this.dec.decode(encWebhookBuf));
 
     const project = await createProject(
       encryptedProjectKey,
@@ -105,29 +112,33 @@ export class StorageService {
     const k: Project[] = [];
     for (let i = 0; i < encryptedProjects.length; i++) {
       const encProj = encryptedProjects[i];
-      // console.log(encProj);
+      console.log(encProj);
+      const projectKey = await this.cs.decryptProjectKey(
+        encProj.encProjectKey,
+        privateKey
+      );
 
-      const nameBuf = Utils.fromB64ToBuffer(encProj.name);
-      const descBuf = Utils.fromB64ToBuffer(encProj.description);
-      const hookBuf = Utils.fromB64ToBuffer(encProj.webhookUrl);
-      const privateKeyBuf = Utils.fromB64ToBuffer(privateKey);
+      const nameBuf = decode(encProj.name);
+      const descBuf = decode(encProj.description);
+      const hookBuf = decode(encProj.webhookUrl);
+      const projectKeyBuf = decode(projectKey);
 
       console.log(privateKey.length);
       const decNameBuf = await this.cf.decrypt(
         nameBuf,
-        privateKeyBuf,
+        projectKeyBuf,
         "AES-GCP"
       );
       // console.log("description");
       const decDescBuf = await this.cf.decrypt(
         descBuf,
-        privateKeyBuf,
+        projectKeyBuf,
         "AES-GCP"
       );
       // console.log("hook");
       const decHookBuf = await this.cf.decrypt(
         hookBuf,
-        privateKeyBuf,
+        projectKeyBuf,
         "AES-GCP"
       );
 
@@ -140,7 +151,7 @@ export class StorageService {
         name,
         description: desc,
         webhookUrl: hook,
-        encryptedProjectKey: encProj.encryptedProjectKey,
+        encryptedProjectKey: encProj.encProjectKey,
       };
 
       k[i] = res;

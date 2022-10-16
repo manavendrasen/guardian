@@ -6,6 +6,7 @@ import { CryptoFunctions } from "../cryptoFunctions";
 import { Utils } from "../utils";
 import { AuthTokens } from "./AuthServices";
 import { CryptoServices } from "./CryptoServices";
+import { encode, decode } from "base64-arraybuffer";
 
 export type CreateProjectMeta = {
   name: string;
@@ -55,10 +56,10 @@ export class StorageService {
       this.tokens.publicKey
     );
 
-    const projectKeyBuf = Utils.fromB64ToBuffer(projectKeyStr);
-    const nameBuf = Utils.fromStringToBuffer(projectMeta.name);
-    const descriptionBuf = Utils.fromStringToBuffer(projectMeta.description);
-    const webhookBuf = Utils.fromStringToBuffer(projectMeta.webhook);
+    const projectKeyBuf = decode(projectKeyStr);
+    const nameBuf = decode(projectMeta.name);
+    const descriptionBuf = decode(projectMeta.description);
+    const webhookBuf = decode(projectMeta.webhook);
 
     const encNameBuf = await this.cf.encrypt(nameBuf, projectKeyBuf, "AES-GCP");
     const encDescriptionBuf = await this.cf.encrypt(
@@ -72,9 +73,9 @@ export class StorageService {
       "AES-GCP"
     );
 
-    const encNameStr = Utils.fromBufferToB64(encNameBuf);
-    const encDescriptionStr = Utils.fromBufferToB64(encDescriptionBuf);
-    const encWebhookStr = Utils.fromBufferToB64(encWebhookBuf);
+    const encNameStr = encode(encNameBuf);
+    const encDescriptionStr = encode(encDescriptionBuf);
+    const encWebhookStr = encode(encWebhookBuf);
 
     const project = await createProject(
       encryptedProjectKey,
@@ -109,10 +110,10 @@ export class StorageService {
     const k: Project[] = [];
     for (let i = 0; i < encryptedProjects.length; i++) {
       const encProj = encryptedProjects[i];
-      const nameBuf = Utils.fromB64ToBuffer(encProj.name);
-      const descBuf = Utils.fromB64ToBuffer(encProj.description);
-      const hookBuf = Utils.fromB64ToBuffer(encProj.webhookUrl);
-      const privateKeyBuf = Utils.fromB64ToBuffer(privateKey);
+      const nameBuf = decode(encProj.name);
+      const descBuf = decode(encProj.description);
+      const hookBuf = decode(encProj.webhookUrl);
+      const privateKeyBuf = decode(privateKey);
 
       const decNameBuf = await this.cf.decrypt(
         nameBuf,
