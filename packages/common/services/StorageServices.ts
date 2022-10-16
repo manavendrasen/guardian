@@ -37,9 +37,9 @@ class StorageService {
       this.tokens.publicKey
     );
 
-    const projectKeyBuf = Utils.fromB64ToBuffer(projectKeyStr);
-    const nameBuf = Utils.fromStringToBuffer(projectMeta.name);
-    const descriptionBuf = Utils.fromStringToBuffer(projectMeta.description);
+    const projectKeyBuf = decode(projectKeyStr);
+    const nameBuf = decode(projectMeta.name);
+    const descriptionBuf = decode(projectMeta.description);
 
     const encNameBuf = await this.cf.encrypt(nameBuf, projectKeyBuf, "AES-GCP");
     const encDescriptionBuf = await this.cf.encrypt(

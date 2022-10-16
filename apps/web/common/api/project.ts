@@ -8,7 +8,7 @@ export type ProjectResult = {
   ownerId: string;
   createdAt: string;
   updatedAt: string;
-  encryptedProjectKey: string;
+  encProjectKey: string;
 };
 
 export const createProject = async (

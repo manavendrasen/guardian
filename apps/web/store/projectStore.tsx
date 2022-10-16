@@ -43,8 +43,8 @@ type TProject = {
 
 const useProjectStore = create<TProject>((set, get) => ({
   loading: false,
-  project: sampleProject,
-  projects: sampleProjects,
+  project: null,
+  projects: [],
   setProject: (project: Project) => {
     set((state: TProject) => ({ ...state, project: project }));
   },
@@ -81,6 +81,10 @@ const useProjectStore = create<TProject>((set, get) => ({
     if (user) {
       const ss = new StorageService(user);
       ss.createNewProject(payload);
+      console.log("created new project, refetching");
+
+      get().getAllProjects();
+      // console.log();
     } else {
       console.error("User not found.");
     }
@@ -92,6 +96,7 @@ const useProjectStore = create<TProject>((set, get) => ({
     if (masterPasswordKey && user) {
       const ss = new StorageService(user);
       const res = await ss.getAllProjects(masterPasswordKey);
+      get().setProjects(res);
       console.log("getAllProjects", res);
     } else {
       console.error("User and master password not found.");

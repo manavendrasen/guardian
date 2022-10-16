@@ -28,14 +28,17 @@ const AddConfigForm: React.FC<AddConfigFormProps> = ({ environment }) => {
 
   const onSubmit: SubmitHandler<AddConfigFormResponse> = (data) => {
     console.log(JSON.stringify(data, null, 2));
-    addConfig({
-      name: data.name,
-      description: data.description,
-      environment: environment,
-    });
+    addConfig(
+      {
+        name: data.name,
+        description: data.description,
+        environment: environment,
+      },
+      success
+    );
     // addConfig(data);
-    success(`Successfully Added ${data.name} Config`);
-    // hideModal();
+    
+    hideModal();
   };
 
   return (

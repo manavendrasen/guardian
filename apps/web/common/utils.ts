@@ -1,37 +1,18 @@
 export class Utils {
   static fromStringToBuffer(data: string): ArrayBuffer {
-    const arrayBuf = new Uint8Array(data.length);
+    const encoder = new TextEncoder();
 
-    for (let i = 0; i < data.length; i++) {
-      arrayBuf[i] = data.charCodeAt(i);
-    }
-
-    return arrayBuf;
+    return encoder.encode(data);
 
     // const enc = new TextEncoder();
     // return enc.encode(data);
   }
 
   static fromBufferToString(data: ArrayBuffer): string {
-    const arrayBuf = new Uint8Array(data);
-    let res = "";
-
-    for (let i = 0; i < arrayBuf.byteLength; i++) {
-      res += String.fromCharCode(arrayBuf[i]);
-    }
-
-    return res;
-
+    const decoder = new TextDecoder('utf8');
+    return decoder.decode(data);
     // const dec = new TextDecoder();
 
     // return dec.decode(data);
-  }
-
-  static fromB64ToBuffer(data: string): ArrayBuffer {
-    return Utils.fromStringToBuffer(atob(data));
-  }
-
-  static fromBufferToB64(data: ArrayBuffer): string {
-    return btoa(Utils.fromBufferToString(data));
   }
 }
