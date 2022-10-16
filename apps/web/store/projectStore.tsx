@@ -3,25 +3,8 @@ import { Project } from "types/Project";
 import create from "zustand";
 import { StorageService } from "common/services/StorageServices";
 import useAuthStore from "./authStore";
-
-const sampleProject = {
-  id: "1",
-  name: "Poptalk",
-  description: "Eu mollit id sit cupidatat aliqua.",
-} as Project;
-
-const sampleProjects = [
-  {
-    id: "1",
-    name: "Poptalk",
-    description: "Eu mollit id sit cupidatat aliqua.",
-  } as Project,
-  {
-    id: "2",
-    name: "Vinyl",
-    description: "Eu mollit id sit cupidatat aliqua.",
-  } as Project,
-];
+import { CryptoServices } from "common/services/CryptoServices";
+import * as REQUESTS from "requests/authRequests";
 
 type AddProjectFormResponse = {
   name: string;
@@ -56,20 +39,45 @@ const useProjectStore = create<TProject>((set, get) => ({
   },
   addMembersToProject: async (members: string[]) => {
     get().setLoading(true);
+    const { user } = useAuthStore.getState();
 
     const project = get().project;
-    if (project) {
+    if (project && user) {
       const { id } = project;
+      const emailKeyPairs = [];
 
-      // TODO: add encrypted project key
-      const membersWithEncKey = members.map((member, index) => {
-        return {
-          email: member,
-          encProjectKey: index,
-        };
-      });
+      for (let i = 0; i < members.length; i++) {
+        const email = members[i];
+        const publicKeys = await REQUESTS.getPublicKeyForUser(email, {
+          headers: { Authorization: `Bearer ${user.accessToken}` },
+        });
+        emailKeyPairs.push({
+          email,
+          publicKeys,
+        });
+      }
 
-      const res = await addMemberToProject(id, membersWithEncKey);
+      console.log(emailKeyPairs);
+
+      // // TODO: add encrypted project key
+      // const cs = new CryptoServices(window.crypto);
+
+      // const membersWithEncKey = members.map((member, index) => {
+      //   // const encProjectKey;
+      //   return {
+      //     email: member,
+      //     encProjectKey: index,
+      //   };
+      // });
+
+      // if (user) {
+      //   await addMemberToProject(id, membersWithEncKey, {
+      //     headers: { Authorization: `Bearer ${user.accessToken}` },
+      //   });
+      // } else {
+      //   console.error("User not found");
+      // }
+
       // return res.statusCode === 200;
     } else {
       get().setLoading(false);

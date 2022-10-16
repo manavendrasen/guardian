@@ -17,3 +17,18 @@ export async function login(data: any) {
     console.error(error);
   }
 }
+
+export async function getPublicKeyForUser(email: string, config: any) {
+  try {
+    const res = await API.post(
+      `/user/get-public-key`,
+      {
+        email,
+      },
+      config
+    );
+    return res.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
