@@ -66,7 +66,8 @@ const useConfigStore = create<TConfig>((set, get) => ({
     const projectId = useProjectStore.getState().project?.id;
     if (projectId && user && publicKey) {
       const ss = new StorageService(user);
-      ss.createNewConfig(payload);
+      await ss.createNewConfig(payload);
+      get().getAllConfigsForProject(projectId);
     } else {
       console.error("Project ID Not Set");
     }
