@@ -65,26 +65,8 @@ const useConfigStore = create<TConfig>((set, get) => ({
     const publicKey = user?.publicKey;
     const projectId = useProjectStore.getState().project?.id;
     if (projectId && user && publicKey) {
-      //const cs = new CryptoServices(window.crypto);
       const ss = new StorageService(user);
       ss.createNewConfig(payload);
-      console.log("created new config, refetching");
-      //const configKey = await cs.getConfigKey();
-
-      // const encConfigKey = await cs.getEncryptedConfigKey(configKey, publicKey);
-
-      // await REQUESTS.addConfig(
-      //   projectId,
-      //   {
-      //     name: payload.name,
-      //     environment: Environment[payload.environment],
-      //     encConfigKey,
-      //   },
-      //   {
-      //     headers: { Authorization: `Bearer ${user.accessToken}` },
-      //   }
-      // );
-      callback(`Successfully Added Config`);
     } else {
       console.error("Project ID Not Set");
     }

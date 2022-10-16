@@ -8,10 +8,9 @@ import useProjectStore from "store/projectStore";
 
 function Sidebar() {
   const { isVisible, setIsVisible } = useDashboardStore();
-  const { projects } = useProjectStore();
+  const { projects, project } = useProjectStore();
   const router = useRouter();
   const { pathname } = router;
-  const { id } = router.query;
 
   const trigger = useRef(null);
   const sidebar = useRef(null);
@@ -117,18 +116,18 @@ function Sidebar() {
                             !open && "hidden"
                           }`}
                         >
-                          {projects.map((project) => (
+                          {projects.map((proj) => (
                             <li
                               className='mb-1 block text-slate-400 hover:text-slate-200 transition duration-150 truncate'
-                              key={project.id}
+                              key={proj.id}
                             >
-                              <Link href={`/project/${project.id}`}>
+                              <Link href={`/project/${proj.id}`}>
                                 <span
                                   className={`block text-slate-100 hover:text-primary transition duration-150  text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 cursor-pointer ${
-                                    id === project.id && "text-primary"
+                                    project?.id === proj.id && "text-primary"
                                   }`}
                                 >
-                                  {project.name}
+                                  {proj.name}
                                 </span>
                               </Link>
                             </li>

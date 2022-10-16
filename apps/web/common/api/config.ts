@@ -3,7 +3,7 @@ import useProjectStore from "store/projectStore";
 
 export const createConfig = async (
   encryptedName: string,
-  encryptedEnviroment: string,
+  encryptedEnvironment: string,
   encryptedConfigKey: string,
   accessToken: string
 ) => {
@@ -13,7 +13,7 @@ export const createConfig = async (
     `http://localhost:5000/api/v1/config/create-config/${id}`,
     {
       name: encryptedName,
-      enviroment: encryptedEnviroment,
+      environment: encryptedEnvironment,
       encConfigKey: encryptedConfigKey,
     },
     {

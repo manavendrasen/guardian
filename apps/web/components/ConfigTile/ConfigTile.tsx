@@ -20,9 +20,9 @@ const ConfigTile: React.FC<ConfigTileProps> = ({ config }) => {
       onClick={routeToConfigPage}
     >
       <h5 className='font-medium'>{config.name}</h5>
-      <p className='text-slate-600 text-sm'>
+      {/* <p className='text-slate-600 text-sm'>
         Minim id ad incididunt est culpa voluptate ullamco veniam et qui.
-      </p>
+      </p> */}
       <p className='text-slate-600  font-medium text-xs uppercase'>
         {config._count?.secrets} Secrets
       </p>

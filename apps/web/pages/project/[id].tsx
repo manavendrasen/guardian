@@ -8,7 +8,13 @@ import PageHeader from "components/PageHeader/PageHeader";
 import { Environment } from "constants/Environments";
 import AddConfigForm from "features/AddConfig/AddConfig";
 import AddMemberToProjectForm from "features/AddMemberToProject/AddMemberToProject";
-import { FiPlus, FiGlobe, FiUsers, FiSettings } from "react-icons/fi";
+import {
+  FiPlus,
+  FiGlobe,
+  FiUsers,
+  FiSettings,
+  FiRefreshCw,
+} from "react-icons/fi";
 import useModal from "store/modalStore";
 import useProjectStore from "store/projectStore";
 import useConfigStore from "store/configStore";
@@ -18,7 +24,7 @@ interface ProjectIdProps {}
 const ProjectId: React.FC<ProjectIdProps> = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { project } = useProjectStore();
+  const { project, projects, setProject } = useProjectStore();
   const {
     developmentConfigs,
     productionConfig,
@@ -28,8 +34,12 @@ const ProjectId: React.FC<ProjectIdProps> = () => {
   const { showModal } = useModal();
 
   useEffect(() => {
+    if (project?.id != id) {
+      const projectWithId = projects.find((proj) => proj.id === id);
+      setProject(projectWithId!);
+    }
     getAllConfigsForProject(id as string);
-  }, []);
+  }, [, id]);
 
   return (
     <>
@@ -37,6 +47,13 @@ const ProjectId: React.FC<ProjectIdProps> = () => {
       <DashboardLayout>
         <PageHeader title={`Projects > ${project?.name}`}>
           <div className='flex gap-2 items-center'>
+            <SecondaryButton
+              onClick={() => {
+                getAllConfigsForProject(id as string);
+              }}
+            >
+              <FiRefreshCw />
+            </SecondaryButton>
             <SecondaryButton onClick={() => {}}>
               <FiSettings /> Settings
             </SecondaryButton>

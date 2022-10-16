@@ -3,7 +3,6 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import Button from "components/Button/Button";
 import useModal from "store/modalStore";
 import { Environment } from "constants/Environments";
-import { addConfig } from "requests/configRequests";
 import useConfigStore from "store/configStore";
 import useAlert from "store/alertStore";
 
@@ -32,12 +31,12 @@ const AddConfigForm: React.FC<AddConfigFormProps> = ({ environment }) => {
       {
         name: data.name,
         description: data.description,
-        environment: environment,
+        environment: Environment[environment],
       },
       success
     );
     // addConfig(data);
-    
+
     hideModal();
   };
 
