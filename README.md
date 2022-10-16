@@ -1,35 +1,76 @@
-# Turborepo starter
 
-This is an official pnpm starter turborepo.
+<!-- PROJECT LOGO -->
+<br />
+<p align="center">
+  <a href="https://github.com/manavendrasen/guardian-hackout">
+    <img src="https://github.com/manavendrasen/walie-nft-warranty/blob/main/assets/Walie%20Icon.png?raw=true" alt="Logo" width="80" height="80">
+  </a>
 
-## What's inside?
+  <h3 align="center">Guardian</h3>
 
-This turborepo uses [pnpm](https://pnpm.io) as a package manager. It includes the following packages/apps:
+  <p align="center">
+    Securely Store and Share your Dev Secrets with your team
+		<br/>
+		<a href="https://www.canva.com/design/DAFPKwMUOSw/5I7h03NpkFG4yBe0AtZpDw/view#1">Presentation</a>
+  </p>
+</p>
+
+[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://github.com/manavendrasen/guardian-hackout)
+
+
+
+<!-- ABOUT THE PROJECT -->
+
+## About The Project
+
+No more sharing private development secrets over inefficient and insecure channels. 
+
+We are here with Guardian to help dev teams securely store and share their env variables using end to end encryption, and control the access of those variables using an simple and easy to use dashboard.
+
+Teams can use Guardian Cloud - our instance of Guardian to store the secrets without worrying about the infra or they can opt in the self-host way and deploy the entire monorepo on their infrastructure.
+
+### Database ER
+
+![Architecture](https://user-images.githubusercontent.com/44477212/196032319-3d4bf759-a221-414e-9886-f05cb17badec.png) 
+
+
 
 ### Apps and Packages
 
-- `docs`: a [Next.js](https://nextjs.org) app
-- `web`: another [Next.js](https://nextjs.org) app
-- `ui`: a stub React component library shared by both `web` and `docs` applications
-- `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `tsconfig`: `tsconfig.json`s used throughout the monorepo
+- `apps/web`: Next JS Web Client
+- `apps/api`: Express Server
+- `apps/cli`: CLI tool to manage your secrets
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+#### CLI
 
-### Utilities
+![CLI](https://user-images.githubusercontent.com/26283488/196033165-175ca709-4ecf-42bd-b85a-72727cd42ebc.png) 
 
-This turborepo has some additional tools already setup for you:
+#### UI
+![image](https://user-images.githubusercontent.com/44477212/196033213-4aa22d39-e79f-40c0-b25c-1d56a5dbf4ea.png)
+![image](https://user-images.githubusercontent.com/44477212/196033268-7bb77ef5-6c6f-441f-ae79-a56ce2a9a002.png)
+![image](https://user-images.githubusercontent.com/44477212/196033486-7a8065aa-c3d0-4e72-93d8-84057ec816f6.png)
+![image](https://user-images.githubusercontent.com/44477212/196033670-7735a7d6-a9cf-480a-9d58-0113ff246141.png)
+![image](https://user-images.githubusercontent.com/44477212/196033455-2151d40c-e13a-457b-ad79-534ab8fb7376.png)
+![image](https://user-images.githubusercontent.com/44477212/196033614-251b8c91-5180-49a9-8fcf-984a27f59019.png)
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+
+### Technology
+
+This  has some additional tools already setup for you:
+
+- [NextJS](https://nextjs.org/)
+- [Express](https://expressjs.com/)
+- [oclif](https://oclif.io/)
+- [PlanetScale](https://planetscale.com/)
+- [TypeScript](https://www.typescriptlang.org/)
 
 ### Build
 
 To build all apps and packages, run the following command:
 
 ```
-cd my-turborepo
+git clone https://github.com/manavendrasen/guardian-hackout.git
+cd guardian-hackout
 pnpm run build
 ```
 
@@ -38,36 +79,12 @@ pnpm run build
 To develop all apps and packages, run the following command:
 
 ```
-cd my-turborepo
+cd guardian-hackout
 pnpm run dev
 ```
 
-### Remote Caching
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.org/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-pnpm dlx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your turborepo:
-
-```
-pnpm dlx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Pipelines](https://turborepo.org/docs/core-concepts/pipelines)
-- [Caching](https://turborepo.org/docs/core-concepts/caching)
-- [Remote Caching](https://turborepo.org/docs/core-concepts/remote-caching)
-- [Scoped Tasks](https://turborepo.org/docs/core-concepts/scopes)
-- [Configuration Options](https://turborepo.org/docs/reference/configuration)
-- [CLI Usage](https://turborepo.org/docs/reference/command-line-reference)
+## Contributors
+- [Ayush Agrawal](https://github.com/Lucifer0x17)
+- [Divyanshu Sharma](https://github.com/d1vshar)
+- [Manavendra Sen](https://github.com/manavendrasen)
+- [Somil Gupta](https://github.com/somil24)
