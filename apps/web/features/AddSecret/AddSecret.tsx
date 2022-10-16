@@ -3,8 +3,8 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import Button from "components/Button/Button";
 import useModal from "store/modalStore";
 import { Environment } from "constants/Environments";
-import useSecretStore from "store/configStore";
 import useAlert from "store/alertStore";
+import useSecretStore from "store/secretStore";
 
 interface AddSecretFormProps {}
 
@@ -17,7 +17,7 @@ type AddSecretFormResponse = {
 const AddSecretForm: React.FC<AddSecretFormProps> = () => {
   const { hideModal } = useModal();
   const { success } = useAlert();
-  // const { addSecret } = useSecretStore();
+  const { addSecret } = useSecretStore();
   const {
     register,
     handleSubmit,
@@ -26,11 +26,11 @@ const AddSecretForm: React.FC<AddSecretFormProps> = () => {
 
   const onSubmit: SubmitHandler<AddSecretFormResponse> = (data) => {
     console.log(JSON.stringify(data, null, 2));
-    // addSecret({
-    //   name: data.name,
-    //   value: data.value,
-    //   comment: comment,
-    // });
+    addSecret({
+      name: data.name,
+      value: data.value,
+      comment: data.comment,
+    });
     success(`Successfully Added Secret`);
     hideModal();
   };

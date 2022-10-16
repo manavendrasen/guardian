@@ -73,7 +73,6 @@ const useConfigStore = create<TConfig>((set, get) => ({
         projectId,
         {
           name: payload.name,
-          // description: payload.description,
           environment: Environment[payload.environment],
           encConfigKey,
         },
@@ -93,8 +92,6 @@ const useConfigStore = create<TConfig>((set, get) => ({
     });
 
     const fetchedConfigs = res.getConfigs;
-
-    console.log(res);
 
     const fetchedDevelopmentConfigs = fetchedConfigs.filter(
       (el: Config) => el.environment === DEVELOPMENT

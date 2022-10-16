@@ -67,12 +67,7 @@ const ProjectId: React.FC<ProjectIdProps> = () => {
             </SecondaryButton>
             {developmentConfigs &&
               developmentConfigs.map((config) => (
-                <ConfigTile
-                  title={config.name}
-                  description='Elit esse proident occaecat commodo commodo et qui.'
-                  id={config.id}
-                  count={config._count.secrets}
-                />
+                <ConfigTile config={config} />
               ))}
           </div>
           <div className=' w-full rounded-lg flex flex-col  gap-4'>
@@ -86,14 +81,7 @@ const ProjectId: React.FC<ProjectIdProps> = () => {
               <FiPlus />
             </SecondaryButton>
             {stagingConfigs &&
-              stagingConfigs.map((config) => (
-                <ConfigTile
-                  title={config.name}
-                  description='Elit esse proident occaecat commodo commodo et qui.'
-                  id={config.id}
-                  count={config._count.secrets}
-                />
-              ))}
+              stagingConfigs.map((config) => <ConfigTile config={config} />)}
           </div>
           <div className=' w-full rounded-lg flex flex-col  gap-4'>
             <h6 className='font-medium'>Production</h6>
@@ -108,14 +96,7 @@ const ProjectId: React.FC<ProjectIdProps> = () => {
               <FiPlus />
             </SecondaryButton>
             {productionConfig &&
-              productionConfig.map((config) => (
-                <ConfigTile
-                  title={config.name}
-                  description='Elit esse proident occaecat commodo commodo et qui.'
-                  id={config.id}
-                  count={config._count.secrets}
-                />
-              ))}
+              productionConfig.map((config) => <ConfigTile config={config} />)}
           </div>
         </main>
       </DashboardLayout>

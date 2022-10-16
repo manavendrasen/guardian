@@ -19,13 +19,6 @@ export const createProjectController = asyncHandler(
     const { encProjectKey, ...data } = req.body;
     const user: any = req.user;
 
-        console.log(user.id);
-
-        try {
-            if (!user) throwError(404, "Unauthorized User");
-            const project = await createProject(user!, data);
-            if (!project) throwError(400, "Project not Created");
-
     try {
       if (!user) throwError(404, "Unauthorized User");
       const project = await createProject(user!, data);
