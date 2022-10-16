@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useRouter } from "next/router";
 import Button, { SecondaryButton } from "components/Button/Button";
 import ConfigTile from "components/ConfigTile/ConfigTile";
 import DashboardLayout from "components/DashboardLayout/DashboardLayout";
@@ -15,12 +16,20 @@ import useConfigStore from "store/configStore";
 interface ProjectIdProps {}
 
 const ProjectId: React.FC<ProjectIdProps> = () => {
+  const router = useRouter();
+  const { id } = router.query;
   const { project } = useProjectStore();
-  const { getAllConfigsForProject } = useConfigStore();
+  const {
+    developmentConfigs,
+    productionConfig,
+    stagingConfigs,
+    getAllConfigsForProject,
+  } = useConfigStore();
   const { showModal } = useModal();
-  // useEffect(() => {
-  // getAllConfigsForProject();
-  // }, []);
+
+  useEffect(() => {
+    getAllConfigsForProject(id as string);
+  }, []);
 
   return (
     <>
@@ -56,11 +65,15 @@ const ProjectId: React.FC<ProjectIdProps> = () => {
             >
               <FiPlus />
             </SecondaryButton>
-            <ConfigTile
-              title='Example Config'
-              description='Officia cillum mollit duis cillum nisi veniam do ut ex consequat mollit velit.'
-              id='123'
-            />
+            {developmentConfigs &&
+              developmentConfigs.map((config) => (
+                <ConfigTile
+                  title={config.name}
+                  description='Elit esse proident occaecat commodo commodo et qui.'
+                  id={config.id}
+                  count={config._count.secrets}
+                />
+              ))}
           </div>
           <div className=' w-full rounded-lg flex flex-col  gap-4'>
             <h6 className='font-medium'>Staging</h6>
@@ -72,6 +85,15 @@ const ProjectId: React.FC<ProjectIdProps> = () => {
             >
               <FiPlus />
             </SecondaryButton>
+            {stagingConfigs &&
+              stagingConfigs.map((config) => (
+                <ConfigTile
+                  title={config.name}
+                  description='Elit esse proident occaecat commodo commodo et qui.'
+                  id={config.id}
+                  count={config._count.secrets}
+                />
+              ))}
           </div>
           <div className=' w-full rounded-lg flex flex-col  gap-4'>
             <h6 className='font-medium'>Production</h6>
@@ -85,6 +107,15 @@ const ProjectId: React.FC<ProjectIdProps> = () => {
             >
               <FiPlus />
             </SecondaryButton>
+            {productionConfig &&
+              productionConfig.map((config) => (
+                <ConfigTile
+                  title={config.name}
+                  description='Elit esse proident occaecat commodo commodo et qui.'
+                  id={config.id}
+                  count={config._count.secrets}
+                />
+              ))}
           </div>
         </main>
       </DashboardLayout>

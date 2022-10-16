@@ -11,6 +11,7 @@ import useProjectStore from "store/projectStore";
 import { getAllProjects } from "common/api/project";
 import useAuthStore from "store/authStore";
 import { useRouter } from "next/router";
+import { GetServerSideProps } from "next";
 
 const Web = () => {
   const { showModal } = useModal();
@@ -19,16 +20,19 @@ const Web = () => {
   const router = useRouter();
 
   useEffect(() => {
-    // if (us) {
-    getAllProjects();
-    // } else {
-    //   router.push("/auth/login");
-    // }
+    if (user) {
+      getAllProjects();
+    } else {
+      router.push("/auth/login");
+    }
   }, []);
 
   const createNewProjectHandler = () => {
     showModal(<AddProjectForm />);
   };
+
+  if (!user) return <div></div>;
+
   return (
     <>
       <NextHead />

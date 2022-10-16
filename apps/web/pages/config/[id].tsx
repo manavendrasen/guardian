@@ -8,6 +8,7 @@ import useConfigStore from "store/configStore";
 import useModal from "store/modalStore";
 import AddSecretForm from "features/AddSecret/AddSecret";
 import useSecretStore from "store/secretStore";
+import useProjectStore from "store/projectStore";
 
 interface ConfigIdProps {}
 
