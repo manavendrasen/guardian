@@ -37,6 +37,7 @@ export interface Config {
   id: string;
   environment: string;
   name: string;
+  configMember: Array<any>;
   encryptedConfigKey: string;
   _count?: {
     secrets: number;
@@ -163,13 +164,132 @@ export class StorageService {
     return k;
   }
 
-  async getAllConfigForProjectId(projectId: string): Promise<Config[]> {
+  async getAllConfigForProjectId(projectId: string, mPass: string): Promise<Config[]> {
+    const mKey = await this.cs.createMasterPasswordKey(
+      this.tokens.email,
+      mPass
+    );
+
     const pro = await getAllConfigs(projectId, this.tokens.accessToken);
 
-    return pro;
+    return await this.decryptConfigs(pro, mKey);
   }
 
-  async getAllSecretsForConfigId(configId: string): Promise<Secret[]> {
-    return await getSecretsForConfig(configId, this.tokens.accessToken);
+  async getAllSecretsForConfigId(encConfigKey:string, configId: string, mPass: string): Promise<Secret[]> {
+    const mKey = await this.cs.createMasterPasswordKey(
+      this.tokens.email,
+      mPass
+    );
+
+    const secrets = await getSecretsForConfig(configId, this.tokens.accessToken);
+
+    return await this.decryptAllSecrets(encConfigKey, secrets, mKey);
+  }
+
+
+  async encryptSecret(
+    encConfigKey: string,
+    secret: Secret,
+    mKey: string
+  ): Promise<Secret> {
+    const privateKey = await this.cs.getPrivateKey(
+      this.tokens.encryptedPrivateKey,
+      mKey
+    );
+
+    console.log("p", privateKey);
+
+    const configKey = await this.cs.decryptConfigKey(encConfigKey, privateKey);
+    const configKeyBuf = decode(configKey);
+
+    const nameBuf = Utils.fromStringToBuffer(secret.name);
+    const valueBuf = Utils.fromStringToBuffer(secret.value);
+    const commentBuf = Utils.fromStringToBuffer(secret.comment);
+
+    const names = await this.cf.encrypt(nameBuf, configKeyBuf, "AES-GCP");
+    const value = await this.cf.encrypt(valueBuf, configKeyBuf, "AES-GCP");
+    const comment = await this.cf.encrypt(commentBuf, configKeyBuf, "AES-GCP");
+
+    const nameStr = encode(names);
+    const valueStr = encode(value);
+    const commentStr = encode(comment);
+
+    return {
+      ...secret,
+      name: nameStr,
+      value: valueStr,
+      comment: commentStr,
+    };
+  }
+
+  async decryptAllSecrets(
+    encConfigKey: string,
+    secrets: Array<Secret>,
+    mKey: string
+  ) {
+    const privateKey = await this.cs.getPrivateKey(
+      this.tokens.encryptedPrivateKey,
+      mKey
+    );
+
+    const configKey = await this.cs.decryptConfigKey(encConfigKey, privateKey);
+    const configKeyBuf = decode(configKey);
+    let k = [];
+
+    for (let i = 0; i < secrets.length; i++) {
+      const s = secrets[i];
+      const nameBuf = decode(s.name);
+      const valueBuf = decode(s.value);
+      const commentBuf = decode(s.comment);
+
+      const name = await this.cf.decrypt(nameBuf, configKeyBuf, "AES-GCP");
+      const value = await this.cf.decrypt(valueBuf, configKeyBuf, "AES-GCP");
+      const comment = await this.cf.decrypt(
+        commentBuf,
+        configKeyBuf,
+        "AES-GCP"
+      );
+
+      const nameStr = Utils.fromBufferToString(name);
+      const valueStr = Utils.fromBufferToString(value);
+      const commentStr = Utils.fromBufferToString(comment);
+
+      k[i] = {
+        name: nameStr,
+        value: valueStr,
+        comment: commentStr,
+      };
+    }
+
+    return k;
+  }
+
+  async decryptConfigs(configs: Array<Config>, mKey: string) {
+    const privateKey = await this.cs.getPrivateKey(
+      this.tokens.encryptedPrivateKey,
+      mKey
+    );
+
+    let k = [];
+    for (let i = 0; i < configs.length; i++) {
+      let c = configs[i];
+      const configKey = await this.cs.decryptConfigKey(
+        c.configMember[0].encConfigKey,
+        privateKey
+      );
+      const configKeyBuf = decode(configKey);
+      const nameBuf = decode(c.name);
+
+      const name = await this.cf.decrypt(nameBuf, configKeyBuf, "AES-GCP");
+
+      const nameStr = Utils.fromBufferToString(name);
+
+      k[i] = {
+        ...c,
+        name: nameStr,
+      };
+    }
+
+    return k;
   }
 }

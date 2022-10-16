@@ -13,13 +13,9 @@ export type ProjectResult = {
 };
 
 export type Secret = {
-  id: string;
   name: string;
   value: string;
   comment: string;
-  configId: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export const createProject = async (

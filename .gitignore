@@ -36,3 +36,4 @@ config.env
 
 *.env
 guardian.json
+test.js

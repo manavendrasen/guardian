@@ -1,1 +1,1 @@
-console.log(process.env.ATLAS_KEY);
+console.log(process.env.DB_URI);

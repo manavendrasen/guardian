@@ -57,7 +57,11 @@ Create a guardian project or reinitialize an existing one.
     );
 
     if (project) {
-      const config = await getConfigByName(project.id, answers["configName"]);
+      const config = await getConfigByName(
+        project.id,
+        answers["configName"],
+        answers["masterPassword"]
+      );
       if (config) {
         const c: GuardianProjectConfig = {
           projectId: project.id,
@@ -67,7 +71,7 @@ Create a guardian project or reinitialize an existing one.
         };
 
         createFile("guardian.json", JSON.stringify(c, null, 4));
-        this.log("Guardian initialized.")
+        this.log("Guardian initialized.");
       }
     }
   }
