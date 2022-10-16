@@ -24,7 +24,7 @@ router.get(
   findEncryptedPrivateByIdController
 );
 
-router.get(
+router.post(
   "/get-public-key",
   validate(userPublicKeyValidateSchema),
   findPublicKeyByEmailIdController
