@@ -6,7 +6,9 @@ import asyncHandler from "./async";
 export const isAuthenticated = asyncHandler(
   async (req: Request, res: Request, next: NextFunction) => {
     try {
-      req.user = verifyToken(req.headers.authorization?.substring(7) || "") || undefined;
+      req.user =
+        verifyToken(req.headers.authorization?.substring(7) || "") || undefined;
+      console.log(req.user);
       next();
     } catch (error) {
       throwError(401, "Unauthorised User");
