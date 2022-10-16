@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Config } from "../services/StorageServices";
 
 export type ProjectResult = {
   id: string;
@@ -10,6 +11,16 @@ export type ProjectResult = {
   updatedAt: string;
   encProjectKey: string;
 };
+
+export type Secret = {
+  id: string;
+  name: string;
+  value: string;
+  comment: string;
+  configId: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export const createProject = async (
   encryptedProjectKey: string,
@@ -46,4 +57,36 @@ export const getAllProjects = async (
   });
 
   return res.data;
+};
+
+export const getAllConfigs = async (
+  projectId: string,
+  accessToken: string
+): Promise<Config[]> => {
+  try {
+
+    const res = await axios.get(`http://localhost:5000/api/v1/config/get-all-configs/${projectId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  
+    return res.data.getConfigs;
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
+}
+
+export const getSecretsForConfig = async (
+  configId: string,
+  accessToken: string
+): Promise<Secret[]> => {
+  const res = await axios.get(`http://localhost:5000/api/v1/config/get-all-secrets/${configId}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return res.data.secrets;
 };

@@ -17,7 +17,6 @@ export const writeIntoFile = async (filePath: string, content: string) => {
     config: [...config, content],
   };
   fs.writeFile(filePath, JSON.stringify(obj, null, 4), () => {
-    console.log("write");
   });
   // fs.appendFileSync(filePath, config);
 };

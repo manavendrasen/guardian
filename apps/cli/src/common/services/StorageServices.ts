@@ -1,5 +1,5 @@
 import { webcrypto } from "crypto";
-import { createProject, getAllProjects } from "../api/project";
+import { createProject, getAllConfigs, getAllProjects, getSecretsForConfig, Secret } from "../api/project";
 import { CryptoFunctions } from "../cryptoFunctions";
 import { Utils } from "../utils";
 import { AuthTokens } from "./AuthServices";
@@ -32,6 +32,17 @@ export type CreateConfigMeta = {
   name: string;
   description: string;
 };
+
+export interface Config {
+  id: string;
+  environment: string;
+  name: string;
+  encryptedConfigKey: string;
+  _count?: {
+    secrets: number;
+  };
+}
+
 
 export class StorageService {
   private cs: CryptoServices;
@@ -150,5 +161,15 @@ export class StorageService {
     }
 
     return k;
+  }
+
+  async getAllConfigForProjectId(projectId: string): Promise<Config[]> {
+    const pro = await getAllConfigs(projectId, this.tokens.accessToken);
+
+    return pro;
+  }
+
+  async getAllSecretsForConfigId(configId: string): Promise<Secret[]> {
+    return await getSecretsForConfig(configId, this.tokens.accessToken);
   }
 }

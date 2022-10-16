@@ -3,6 +3,7 @@ import { homedir } from "os";
 import path from "path";
 import { AuthTokens } from "../../common/services/AuthServices";
 import { StorageService } from "../../common/services/StorageServices";
+import { getProjectConfig } from "../../services/cliService";
 import { readFile } from "../../services/initService";
 import { getVarsForConfig } from "../../services/repoService";
 let spawn = require("child_process").spawn,
@@ -22,14 +23,9 @@ export default class RunCommand extends Command {
   async run(): Promise<void> {
     const { flags } = await this.parse(RunCommand);
 
-    const tokens: AuthTokens = JSON.parse(
-      await readFile(path.join(homedir(), ".guardian.json"))
-    ) as AuthTokens;
+    const { configId } = getProjectConfig();
 
-    const ss = new StorageService(tokens);
-    // ss.getAllProjects();
-
-    const vars = await getVarsForConfig("", "");
+    const vars = await getVarsForConfig(configId);
 
     const arr = flags.command.split(" ");
     ls = spawn(arr[0], [arr.slice(1)], {
