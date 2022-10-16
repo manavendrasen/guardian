@@ -18,7 +18,7 @@ import { StorageService } from "common/services/StorageServices";
 //   environment: Environment;
 // }
 
-type TConfig = { 
+type TConfig = {
   loading: boolean;
   setLoading: (loading: boolean) => void;
   config: Config | null;
@@ -29,10 +29,7 @@ type TConfig = {
   setStagingConfigs: (configs: Config[]) => void;
   setProductionConfigs: (configs: Config[]) => void;
   setConfig: (config: Config) => void;
-  addConfig: (
-    payload: any,
-    callback: (msg: string) => void
-  ) => void;
+  addConfig: (payload: any, callback: (msg: string) => void) => void;
   getAllConfigsForProject: (projectId: string) => void;
 };
 
@@ -73,27 +70,34 @@ const useConfigStore = create<TConfig>((set, get) => ({
     }
   },
   getAllConfigsForProject: async (projectId: string) => {
-    const { user } = useAuthStore.getState();
+    const { user, masterPasswordKey } = useAuthStore.getState();
     const res = await REQUESTS.getAllConfigForProject(projectId, {
       headers: { Authorization: `Bearer ${user!.accessToken}` },
     });
 
-    const fetchedConfigs = res.getConfigs;
+    if (user && masterPasswordKey) {
+      const ss = new StorageService(user);
 
-    const fetchedDevelopmentConfigs = fetchedConfigs.filter(
-      (el: Config) => el.environment === DEVELOPMENT
-    );
-    const fetchedProductionConfig = fetchedConfigs.filter(
-      (el: Config) => el.environment === PRODUCTION
-    );
-    const fetchedStagingConfigs = fetchedConfigs.filter(
-      (el: Config) => el.environment === STAGING
-    );
+      const fetchedConfigs = await ss.decryptConfigs(
+        res.getConfigs,
+        masterPasswordKey
+      );
 
-    get().setDevelopmentConfigs(fetchedDevelopmentConfigs);
-    get().setStagingConfigs(fetchedStagingConfigs);
-    get().setProductionConfigs(fetchedProductionConfig);
-    console.log("getAllConfigsForProject", res);
+      const fetchedDevelopmentConfigs = fetchedConfigs.filter(
+        (el: Config) => el.environment === DEVELOPMENT
+      );
+      const fetchedProductionConfig = fetchedConfigs.filter(
+        (el: Config) => el.environment === PRODUCTION
+      );
+      const fetchedStagingConfigs = fetchedConfigs.filter(
+        (el: Config) => el.environment === STAGING
+      );
+
+      get().setDevelopmentConfigs(fetchedDevelopmentConfigs);
+      get().setStagingConfigs(fetchedStagingConfigs);
+      get().setProductionConfigs(fetchedProductionConfig);
+      console.log("getAllConfigsForProject", res);
+    }
   },
 }));
 

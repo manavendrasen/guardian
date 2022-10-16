@@ -5,6 +5,7 @@ import { Utils } from "../utils";
 import { AuthTokens } from "./AuthServices";
 import { CryptoServices } from "./CryptoServices";
 import { encode, decode } from "base64-arraybuffer";
+import { Config } from "types/Config";
 
 export type CreateProjectMeta = {
   name: string;
@@ -286,6 +287,35 @@ export class StorageService {
         name: nameStr,
         value: valueStr,
         comment: commentStr,
+      };
+    }
+
+    return k;
+  }
+
+  async decryptConfigs(configs: Array<Config>, mKey: string) {
+    const privateKey = await this.cs.getPrivateKey(
+      this.tokens.encryptedPrivateKey,
+      mKey
+    );
+
+    let k = [];
+    for (let i = 0; i < configs.length; i++) {
+      let c = configs[i];
+      const configKey = await this.cs.decryptConfigKey(
+        c.configMember[0].encConfigKey,
+        privateKey
+      );
+      const configKeyBuf = decode(configKey);
+      const nameBuf = decode(c.name);
+
+      const name = await this.cf.decrypt(nameBuf, configKeyBuf, "AES-GCP");
+
+      const nameStr = Utils.fromBufferToString(name);
+
+      k[i] = {
+        ...c,
+        name: nameStr,
       };
     }
 
