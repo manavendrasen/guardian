@@ -42,6 +42,16 @@ export type EncryptedConfig = {
   updatedAt: string;
 };
 
+export type Secret = {
+  id: string;
+  name: string;
+  value: string;
+  comment: string;
+  configId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export class StorageService {
   private cs: CryptoServices;
   private cf: CryptoFunctions;
@@ -207,5 +217,76 @@ export class StorageService {
       createdAt: config.createdAt,
       updatedAt: config.updatedAt,
     };
+  }
+
+  async encryptSecret(
+    encConfigKey: string,
+    secret: Secret,
+    mKey: string
+  ): Promise<Secret> {
+    const privateKey = await this.cs.getPrivateKey(
+      this.tokens.encryptedPrivateKey,
+      mKey
+    );
+
+    const configKey = await this.cs.decryptConfigKey(encConfigKey, privateKey);
+    const configKeyBuf = decode(configKey);
+
+    const nameBuf = Utils.fromStringToBuffer(secret.name);
+    const valueBuf = Utils.fromStringToBuffer(secret.value);
+    const commentBuf = Utils.fromStringToBuffer(secret.comment);
+
+    const names =  await this.cf.encrypt(nameBuf, configKeyBuf, "AES-GCP");
+    const value =  await this.cf.encrypt(valueBuf, configKeyBuf, "AES-GCP");
+    const comment =  await this.cf.encrypt(commentBuf, configKeyBuf, "AES-GCP");
+
+    const nameStr = encode(names);
+    const valueStr = encode(value);
+    const commentStr = encode(comment);
+
+    return {
+      ...secret,
+      name: nameStr,
+      value: valueStr,
+      comment: commentStr,
+    }
+  }
+
+  async decryptAllSecrets(
+    encConfigKey: string,
+    secrets: Array<Secret>,
+    mKey: string,
+  ) {
+    const privateKey = await this.cs.getPrivateKey(
+      this.tokens.encryptedPrivateKey,
+      mKey
+    );
+
+    const configKey = await this.cs.decryptConfigKey(encConfigKey, privateKey);
+    const configKeyBuf = decode(configKey);
+    let k = [];
+
+    for (let i = 0; i < secrets.length; i++) {
+      const s = secrets[i];
+      const nameBuf = decode(s.name);
+      const valueBuf = decode(s.value);
+      const commentBuf = decode(s.comment);
+
+      const name = await this.cf.decrypt(nameBuf, configKeyBuf, "AES-GCP");
+      const value = await this.cf.decrypt(valueBuf, configKeyBuf, "AES-GCP");
+      const comment = await this.cf.decrypt(commentBuf, configKeyBuf, "AES-GCP");
+
+      const nameStr = Utils.fromBufferToString(name);
+      const valueStr = Utils.fromBufferToString(value);
+      const commentStr = Utils.fromBufferToString(comment);
+
+      k[i] = {
+        name: nameStr,
+        value: valueStr,
+        comment: commentStr
+      };
+    }
+
+    return k;
   }
 }

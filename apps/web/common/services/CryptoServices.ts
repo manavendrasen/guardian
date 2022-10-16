@@ -113,4 +113,13 @@ export class CryptoServices {
 
     return encode(buf);
   }
+
+  async decryptConfigKey(encConfigKey: string, privateKey: string) {
+    const encConfigKeyBuf = decode(encConfigKey);
+    const privateKeyBuf = decode(privateKey);
+
+    const buf = await this.cf.decrypt(encConfigKeyBuf, privateKeyBuf, "RSA-OAEP");
+
+    return encode(buf);
+  }
 }
