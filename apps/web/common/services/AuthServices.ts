@@ -43,7 +43,6 @@ export class AuthServices {
 
   async login(email: string, password: string): Promise<LoginResult> {
     try {
-      // TODO replace with hash
       const mKey = await this.cs.createMasterPasswordKey(email, password);
       const mHash = await this.cs.createMasterPasswordHash(mKey, password);
 

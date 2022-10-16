@@ -1,6 +1,6 @@
 import { webcrypto } from "crypto";
 import { CryptoFunctions } from "../cryptoFunctions";
-import { Utils } from "../utils";
+import { encode, decode } from "base64-arraybuffer";
 
 export class CryptoServices {
   private cf: CryptoFunctions;

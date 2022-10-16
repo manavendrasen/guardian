@@ -108,8 +108,6 @@ export class CryptoFunctions {
       hash: "SHA-256",
     };
 
-    console.log(publicKey);
-
     const pubKey = await this.subtle.importKey(
       "spki",
       publicKey,

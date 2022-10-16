@@ -1,6 +1,4 @@
 import { webcrypto } from "crypto";
-import { readFileSync, writeFileSync } from "fs";
-import { createFile, readFile } from "../../services/initService";
 import { createProject, getAllProjects } from "../api/project";
 import { CryptoFunctions } from "../cryptoFunctions";
 import { Utils } from "../utils";

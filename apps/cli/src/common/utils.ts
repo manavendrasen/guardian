@@ -1,17 +1,19 @@
+import util from "util"
 export class Utils {
   static fromStringToBuffer(data: string): ArrayBuffer {
-    return Buffer.from(data, "utf-8");
+    const encoder = new util.TextEncoder();
+
+    return encoder.encode(data);
+
+    // const enc = new TextEncoder();
+    // return enc.encode(data);
   }
 
   static fromBufferToString(data: ArrayBuffer): string {
-    return Buffer.from(data).toString("utf-8");
-  }
+    const decoder = new util.TextDecoder('utf8');
+    return decoder.decode(data);
+    // const dec = new TextDecoder();
 
-  static fromB64ToBuffer(data: string): ArrayBuffer {
-    return Buffer.from(data, "base64");
-  }
-
-  static fromBufferToB64(data: ArrayBuffer): string {
-    return Buffer.from(data).toString("base64");
+    // return dec.decode(data);
   }
 }

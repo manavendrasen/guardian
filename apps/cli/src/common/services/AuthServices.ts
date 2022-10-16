@@ -3,6 +3,7 @@ import { Utils } from "../utils";
 import { CryptoServices } from "./CryptoServices";
 import { webcrypto } from "crypto";
 import { loginUser } from "../api/auth";
+import { encode, decode } from "base64-arraybuffer";
 
 export type AuthTokens = {
   email: string;
@@ -57,8 +58,6 @@ export class AuthServices {
 
   async login(email: string, password: string): Promise<LoginResult> {
     try {
-
-      // TODO replace with hash
       const mKey = await this.cs.createMasterPasswordKey(email, password);
       const mHash = await this.cs.createMasterPasswordHash(mKey, password);
 
