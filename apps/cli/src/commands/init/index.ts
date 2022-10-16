@@ -58,14 +58,6 @@ Create a guardian project or reinitialize an existing one.
     const tokens = getAuthTokens();
     const ss = new StorageService(tokens);
 
-    if (answers.projectName) {
-      const newProject = await ss.createNewProject({
-        name: answers.projectName,
-        description: answers.projectDescription,
-        webhook: answers.projectWebhook,
-      });
-    }
-
     createFile("guardian.json", JSON.stringify(config, null, 4));
   }
 }
