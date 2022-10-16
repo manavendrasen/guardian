@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Button, { SecondaryButton } from "components/Button/Button";
 import DashboardLayout from "components/DashboardLayout/DashboardLayout";
 import NextHead from "components/NextHead/NextHead";
@@ -14,13 +14,19 @@ interface ConfigIdProps {}
 
 const ConfigId: React.FC<ConfigIdProps> = () => {
   const { config } = useConfigStore();
+  const { secrets, getSecrets } = useSecretStore();
   const { showModal } = useModal();
-  const { secrets } = useSecretStore();
+  const { project } = useProjectStore();
+
+  useEffect(() => {
+    getSecrets();
+  }, []);
+
   return (
     <>
       <NextHead />
       <DashboardLayout>
-        <PageHeader title={`Project > ${config?.name}`}>
+        <PageHeader title={`Project > ${project?.name} > ${config?.name}`}>
           <div className='flex gap-4'>
             <SecondaryButton
               onClick={() => {
