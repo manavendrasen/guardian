@@ -1,6 +1,4 @@
 import * as fs from "fs";
-import fuzzy from "fuzzy";
-import path from "path";
 
 export const createFile = (filePath: string, content: string) => {
   fs.writeFileSync(filePath, content);
@@ -22,12 +20,4 @@ export const writeIntoFile = async (filePath: string, content: string) => {
     console.log("write");
   });
   // fs.appendFileSync(filePath, config);
-};
-
-export const search = async (
-  arr: string[],
-  query: string
-): Promise<string[]> => {
-  if (query == undefined) return arr;
-  return fuzzy.filter(query, arr).map((el) => el.string);
 };

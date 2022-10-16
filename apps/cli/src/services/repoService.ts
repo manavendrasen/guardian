@@ -1,5 +1,6 @@
 import { StorageService } from "../common/services/StorageServices";
 import { getAuthTokens } from "./cliService";
+import fuzzy from "fuzzy";
 
 export const getUserProjectNames = async (mPass: string) => {
   const tokens = getAuthTokens();
@@ -11,7 +12,17 @@ export const getUserProjectNames = async (mPass: string) => {
   return projects.map(p => p.name);
 };
 
-export const getConfigForProject = (projectId: string) => {
+export const search = async (
+  arr: Promise<string[]>,
+  query: string
+): Promise<string[]> => {
+  const rarr = await arr;
+  if (query == undefined) return rarr;
+  return fuzzy.filter(query, rarr).map((el) => el.string);
+};
+
+
+export const getConfigForProject = async (projectId: string) => {
   return [
     "heroku (production)",
     "fix/metamask (development)",

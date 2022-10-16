@@ -104,8 +104,6 @@ export class CryptoFunctions {
       hash: "SHA-256",
     };
 
-    console.log(publicKey);
-
     const pubKey = await this.subtle.importKey(
       "spki",
       publicKey,
@@ -139,7 +137,6 @@ export class CryptoFunctions {
     key: ArrayBuffer,
     iv: ArrayBuffer
   ): Promise<ArrayBuffer> {
-    console.log(key.byteLength);
     const aesKey = await this.subtle.importKey(
       "raw",
       key,

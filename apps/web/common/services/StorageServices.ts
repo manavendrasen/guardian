@@ -107,12 +107,9 @@ export class StorageService {
       mKey
     );
 
-    console.log(privateKey);
-
     const k: Project[] = [];
     for (let i = 0; i < encryptedProjects.length; i++) {
       const encProj = encryptedProjects[i];
-      console.log(encProj);
       const projectKey = await this.cs.decryptProjectKey(
         encProj.encProjectKey,
         privateKey
@@ -123,7 +120,6 @@ export class StorageService {
       const hookBuf = decode(encProj.webhookUrl);
       const projectKeyBuf = decode(projectKey);
 
-      console.log(privateKey.length);
       const decNameBuf = await this.cf.decrypt(
         nameBuf,
         projectKeyBuf,

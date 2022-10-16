@@ -55,9 +55,9 @@ export class StorageService {
     );
 
     const projectKeyBuf = decode(projectKeyStr);
-    const nameBuf = decode(projectMeta.name);
-    const descriptionBuf = decode(projectMeta.description);
-    const webhookBuf = decode(projectMeta.webhook);
+    const nameBuf = Utils.fromStringToBuffer(projectMeta.name);
+    const descriptionBuf = Utils.fromStringToBuffer(projectMeta.description);
+    const webhookBuf = Utils.fromStringToBuffer(projectMeta.webhook);
 
     const encNameBuf = await this.cf.encrypt(nameBuf, projectKeyBuf, "AES-GCP");
     const encDescriptionBuf = await this.cf.encrypt(
@@ -108,24 +108,29 @@ export class StorageService {
     const k: Project[] = [];
     for (let i = 0; i < encryptedProjects.length; i++) {
       const encProj = encryptedProjects[i];
+      const projectKey = await this.cs.decryptProjectKey(
+        encProj.encProjectKey,
+        privateKey
+      );
+
       const nameBuf = decode(encProj.name);
       const descBuf = decode(encProj.description);
       const hookBuf = decode(encProj.webhookUrl);
-      const privateKeyBuf = decode(privateKey);
+      const projectKeyBuf = decode(projectKey);
 
       const decNameBuf = await this.cf.decrypt(
         nameBuf,
-        privateKeyBuf,
+        projectKeyBuf,
         "AES-GCP"
       );
       const decDescBuf = await this.cf.decrypt(
         descBuf,
-        privateKeyBuf,
+        projectKeyBuf,
         "AES-GCP"
       );
       const decHookBuf = await this.cf.decrypt(
         hookBuf,
-        privateKeyBuf,
+        projectKeyBuf,
         "AES-GCP"
       );
 
@@ -138,7 +143,7 @@ export class StorageService {
         name,
         description: desc,
         webhookUrl: hook,
-        encryptedProjectKey: encProj.encryptedProjectKey,
+        encryptedProjectKey: encProj.encProjectKey,
       };
 
       k[i] = res;

@@ -93,6 +93,15 @@ export class CryptoServices {
     return encode(await this.cf.generateAESKey(128));
   }
 
+  async decryptProjectKey(encProjectKey: string, privateKey: string) {
+    const eProjKeyBuf = decode(encProjectKey);
+    const privateKeyBuf = decode(privateKey);
+
+    const buf = await this.cf.decrypt(eProjKeyBuf, privateKeyBuf, "RSA-OAEP");
+
+    return encode(buf);
+  }
+
   async getEncryptedConfigKey(
     configKey: string,
     publicKey: string
