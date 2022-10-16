@@ -22,3 +22,4 @@ export async function getAllConfigForProject(projectId: string, config: any) {
     console.error(error);
   }
 }
+

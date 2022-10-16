@@ -32,7 +32,7 @@ type TConfig = {
     payload: ICreateConfigPayload,
     callback: (msg: string) => void
   ) => void;
-  getAllConfigsForProject: (projectId: string, router: any) => void;
+  getAllConfigsForProject: (projectId: string) => void;
 };
 
 const useConfigStore = create<TConfig>((set, get) => ({
@@ -86,29 +86,30 @@ const useConfigStore = create<TConfig>((set, get) => ({
       console.error("Project ID Not Set");
     }
   },
-  getAllConfigsForProject: async (projectId: string, router: any) => {
+  getAllConfigsForProject: async (projectId: string) => {
     const { user } = useAuthStore.getState();
     const res = await REQUESTS.getAllConfigForProject(projectId, {
       headers: { Authorization: `Bearer ${user!.accessToken}` },
     });
 
-    // if
-    // const fetchedDevelopmentConfigs = res.filter(
-    //   (el: Config) => el.environment === DEVELOPMENT
-    // );
-    // const fetchedProductionConfig = res.filter(
-    //   (el: Config) => el.environment === PRODUCTION
-    // );
-    // const fetchedStagingConfigs = res.filter(
-    //   (el: Config) => el.environment === STAGING
-    // );
+    const fetchedConfigs = res.getConfigs;
 
-    // get().setDevelopmentConfigs(fetchedDevelopmentConfigs);
-    // get().setStagingConfigs(fetchedStagingConfigs);
-    // get().setProductionConfigs(fetchedProductionConfig);
+    console.log(res);
+
+    const fetchedDevelopmentConfigs = fetchedConfigs.filter(
+      (el: Config) => el.environment === DEVELOPMENT
+    );
+    const fetchedProductionConfig = fetchedConfigs.filter(
+      (el: Config) => el.environment === PRODUCTION
+    );
+    const fetchedStagingConfigs = fetchedConfigs.filter(
+      (el: Config) => el.environment === STAGING
+    );
+
+    get().setDevelopmentConfigs(fetchedDevelopmentConfigs);
+    get().setStagingConfigs(fetchedStagingConfigs);
+    get().setProductionConfigs(fetchedProductionConfig);
     console.log("getAllConfigsForProject", res);
-
-    router.push(`/project/${projectId}`);
   },
 }));
 

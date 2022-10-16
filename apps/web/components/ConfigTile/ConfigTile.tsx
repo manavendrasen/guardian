@@ -5,9 +5,15 @@ interface ConfigTileProps {
   id: string;
   title: string;
   description: string;
+  count: number;
 }
 
-const ConfigTile: React.FC<ConfigTileProps> = ({ id, title, description }) => {
+const ConfigTile: React.FC<ConfigTileProps> = ({
+  id,
+  title,
+  description,
+  count,
+}) => {
   const router = useRouter();
   const routeToConfigPage = () => {
     // fetch product details
@@ -20,6 +26,9 @@ const ConfigTile: React.FC<ConfigTileProps> = ({ id, title, description }) => {
     >
       <h5 className='font-medium'>{title}</h5>
       <p className='text-slate-600 text-sm'>{description}</p>
+      <p className='text-slate-600  font-medium text-xs uppercase'>
+        {count} Secrets
+      </p>
     </div>
   );
 };

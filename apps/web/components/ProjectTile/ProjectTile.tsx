@@ -14,8 +14,8 @@ const ProjectTile: React.FC<ProjectTileProps> = ({ project }) => {
   const { setProject } = useProjectStore();
   const routeToProjectPage = () => {
     setProject(project);
+    // getAllConfigsForProject(project.id,);
     router.push(`/project/${project.id}`);
-    // getAllConfigsForProject(project.id, router);
   };;
   return (
     <div
