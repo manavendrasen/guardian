@@ -52,6 +52,7 @@ export const findAllProjectOfTheUserController = asyncHandler(
     const user: any = req.user;
 
     try {
+      console.log(user, "find projects");
       if (!user) throwError(404, "User Not Found");
 
       const data = await findAllProjectOfTheUser(user.id!);
