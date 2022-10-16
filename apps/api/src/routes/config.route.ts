@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   assignMemberToConfigController,
   createConfigController,
+  getAllConfigByConfigIdController,
   getAllConfigsController,
   getConfigSecretsByNameController,
 } from "../controllers/config.controller";
@@ -22,5 +23,7 @@ router.post(
 router.get("/get-all-configs/:projectId", getAllConfigsController);
 
 router.post("/config-secrets-name", getConfigSecretsByNameController);
+
+router.get("/get-all-secrets/:configId", getAllConfigByConfigIdController);
 
 export default router;

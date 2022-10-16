@@ -9,6 +9,7 @@ import {
   assignMemberToConfig,
   createConfig,
   findConfigByIdWithProject,
+  getAllConfigById,
   getAllConfigs,
   getAllSecretsFromNameForConfig,
 } from "../service/config.service";
@@ -111,6 +112,23 @@ export const getConfigSecretsByNameController = asyncHandler(
       // );
 
       res.send(secrets);
+    } catch (e: any) {
+      if (e instanceof ZodError) {
+        console.error(e.flatten);
+        throwError(400, "Bad data Input");
+      } else {
+        throwError(409, e.message);
+      }
+    }
+  }
+);
+
+export const getAllConfigByConfigIdController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { configId } = req.params;
+    try {
+      const getConfigs = await getAllConfigById(configId);
+      res.send(getConfigs);
     } catch (e: any) {
       if (e instanceof ZodError) {
         console.error(e.flatten);

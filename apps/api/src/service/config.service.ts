@@ -121,3 +121,14 @@ export const getAllSecretsFromNameForConfig = async (
     })
   );
 };
+
+export const getAllConfigById = async (configId: string) => {
+  return await prisma.config.findUnique({
+    where: {
+      id: configId,
+    },
+    select: {
+      secrets: true,
+    },
+  });
+};
