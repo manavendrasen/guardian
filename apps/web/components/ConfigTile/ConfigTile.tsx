@@ -16,7 +16,7 @@ const ConfigTile: React.FC<ConfigTileProps> = ({ config }) => {
   };
   return (
     <div
-      className='bg-slate-100 flex flex-col gap-2 p-6 rounded-md hover:border-primary border-2 border-slate-200  duration-100'
+      className='bg-slate-100 overflow-hidden flex flex-col gap-2 p-6 rounded-md hover:border-primary border-2 border-slate-200  duration-100'
       onClick={routeToConfigPage}
     >
       <h5 className='font-medium'>{config.name}</h5>

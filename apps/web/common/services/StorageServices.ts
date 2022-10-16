@@ -1,4 +1,5 @@
 import { createProject, getAllProjects } from "../api/project";
+import { createConfig } from "../api/config";
 import { CryptoFunctions } from "../cryptoFunctions";
 import { Utils } from "../utils";
 import { AuthTokens } from "./AuthServices";
@@ -29,7 +30,16 @@ export type Project = {
 
 export type CreateConfigMeta = {
   name: string;
-  description: string;
+  environment: string;
+};
+
+export type EncryptedConfig = {
+  configId: string;
+  encryptedEnvironment: string;
+  encryptedName: string;
+  projectId: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export class StorageService {
@@ -156,5 +166,46 @@ export class StorageService {
     console.log(k);
 
     return k;
+  }
+
+  async createNewConfig(
+    configMeta: CreateConfigMeta
+  ): Promise<EncryptedConfig> {
+    const configKey = await this.cs.getConfigKey();
+
+    const encryptedConfigKey = await this.cs.getEncryptedConfigKey(
+      configKey,
+      this.tokens.publicKey
+    );
+    const configKeyBuf = decode(configKey);
+    // const environmentBuf = Utils.fromStringToBuffer(configMeta.environment);
+    const nameBuf = Utils.fromStringToBuffer(configMeta.name);
+
+    const encNameBuf = await this.cf.encrypt(nameBuf, configKeyBuf, "AES-GCP");
+
+    // const encEnvironmentBuf = await this.cf.encrypt(
+    //   environmentBuf,
+    //   configKeyBuf,
+    //   "AES-GCP"
+    // );
+
+    const encNameStr = encode(encNameBuf);
+    // const encEnvironmentStr = encode(encEnvironmentBuf);
+
+    const config = await createConfig(
+      encNameStr,
+      configMeta.environment,
+      encryptedConfigKey,
+      this.tokens.accessToken
+    );
+
+    return {
+      configId: config.id,
+      encryptedName: config.name,
+      encryptedEnvironment: config.environment,
+      projectId: config.projectId,
+      createdAt: config.createdAt,
+      updatedAt: config.updatedAt,
+    };
   }
 }

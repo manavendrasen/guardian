@@ -41,12 +41,15 @@ export const createConfigController = asyncHandler(
       if (!checkMember) throwError(404, "User not found in team");
 
       const config = await createConfig(projectId, data);
+      console.log(config, "config");
       if (!config) throwError(400, "Config not Created");
 
       const addToMember = await assignMemberToConfig(
         { email: user.email, encConfigKey: encConfigKey, role: "OWNER" },
         config.id
       );
+      console.log(addToMember, "add to member");
+
       if (!addToMember) throwError(400, "User is not added in Config Team");
 
       res.status(201).send(config);
@@ -142,10 +145,18 @@ export const getAllConfigByConfigIdController = asyncHandler(
 
 export const getAllConfigsController = asyncHandler(
   async (req: Request, res: Response) => {
+    console.log("hello");
+
     const { projectId } = req.params;
+    console.log(projectId, "projectId");
     const user: any = req.user;
+    console.log(user, "user");
     try {
+      console.log(projectId, user.id);
+
       const getConfigs = await getAllConfigs(projectId, user.id);
+
+      console.log(getConfigs);
 
       res.status(201).send({ projectId, getConfigs });
     } catch (e: any) {
@@ -153,7 +164,9 @@ export const getAllConfigsController = asyncHandler(
         console.error(e.flatten);
         throwError(400, "Bad data Input");
       } else {
-        throwError(409, e.message);
+        console.log(e.message);
+
+        throwError(404, e.message);
       }
     }
   }

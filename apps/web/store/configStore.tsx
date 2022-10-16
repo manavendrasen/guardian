@@ -10,14 +10,15 @@ import { Config } from "types/Config";
 import useProjectStore from "./projectStore";
 import useAuthStore from "./authStore";
 import { CryptoServices } from "common/services/CryptoServices";
+import { StorageService } from "common/services/StorageServices";
 
-interface ICreateConfigPayload {
-  name: string;
-  description: string;
-  environment: Environment;
-}
+// interface ICreateConfigPayload {
+//   name: string;
+//   description: string;
+//   environment: Environment;
+// }
 
-type TConfig = {
+type TConfig = { 
   loading: boolean;
   setLoading: (loading: boolean) => void;
   config: Config | null;
@@ -29,7 +30,7 @@ type TConfig = {
   setProductionConfigs: (configs: Config[]) => void;
   setConfig: (config: Config) => void;
   addConfig: (
-    payload: ICreateConfigPayload,
+    payload: any,
     callback: (msg: string) => void
   ) => void;
   getAllConfigsForProject: (projectId: string) => void;
@@ -64,22 +65,25 @@ const useConfigStore = create<TConfig>((set, get) => ({
     const publicKey = user?.publicKey;
     const projectId = useProjectStore.getState().project?.id;
     if (projectId && user && publicKey) {
-      const cs = new CryptoServices(window.crypto);
-      const configKey = await cs.getConfigKey();
+      //const cs = new CryptoServices(window.crypto);
+      const ss = new StorageService(user);
+      ss.createNewConfig(payload);
+      console.log("created new config, refetching");
+      //const configKey = await cs.getConfigKey();
 
-      const encConfigKey = await cs.getEncryptedConfigKey(configKey, publicKey);
+      // const encConfigKey = await cs.getEncryptedConfigKey(configKey, publicKey);
 
-      await REQUESTS.addConfig(
-        projectId,
-        {
-          name: payload.name,
-          environment: Environment[payload.environment],
-          encConfigKey,
-        },
-        {
-          headers: { Authorization: `Bearer ${user.accessToken}` },
-        }
-      );
+      // await REQUESTS.addConfig(
+      //   projectId,
+      //   {
+      //     name: payload.name,
+      //     environment: Environment[payload.environment],
+      //     encConfigKey,
+      //   },
+      //   {
+      //     headers: { Authorization: `Bearer ${user.accessToken}` },
+      //   }
+      // );
       callback(`Successfully Added Config`);
     } else {
       console.error("Project ID Not Set");
