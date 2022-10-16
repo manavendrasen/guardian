@@ -30,6 +30,6 @@ router.get(
   findPublicKeyByEmailIdController
 );
 
-router.get("/get-project", findAllProjectOfTheUserController);
+router.post("/get-project", findAllProjectOfTheUserController);
 
 export = router;
