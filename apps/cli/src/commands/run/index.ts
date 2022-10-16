@@ -18,7 +18,7 @@ const qs: QuestionCollection<Answers> = [
   },
 ];
 export default class RunCommand extends Command {
-  static description = "Install the env variables during the run time";
+  static description = "Install the env variables during the run time.";
 
   static flags = {
     command: Flags.string({

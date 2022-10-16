@@ -19,7 +19,7 @@ const qs: QuestionCollection<Answers> = [
 ];
 
 export default class LoginCommand extends Command {
-  static description = "Install the env variables during the run time";
+  static description = "Login to guardian servers.";
 
   async run(): Promise<void> {
     const answers = await inquirer.prompt(qs);
